@@ -3,14 +3,13 @@
 This Vue component incorporates full support the Google Places and Geocoder API's a single input field.
 The goal is provide the most native and seamlessly integrated solution possible.
 
-### Basic Usage
-![Basic Usage](./screenshots/basic-usage.gif)
-
-### Autofill Additional Fields
-![Autofill Usage](./screenshots/autofill.gif)
+|Basic Usage|Autofill|
+|--|--|
+| ![Basic Usage](./screenshots/basic-usage.gif) | ![Autofill Usage](./screenshots/autofill.gif) |
 
 
-## Features
+
+### Features
 
 - Built for Bootstrap 4
 - Works just like a native input field
@@ -20,7 +19,7 @@ The goal is provide the most native and seamlessly integrated solution possible.
 - Use multiple instances on the same page
 - Easily auto-fill additional input fields with address component
 
-## Installation
+### Installation
 
 NPM
 
@@ -36,7 +35,7 @@ CDN
     https://www.jsdelivr.com/package/npm/vue-place-autocomplete
 
 
-## Default Usage
+### Default Usage
 
 The default usage extends the InputField from [vue-interface](https://github.com/actengage/vue-interface/tree/master/src/Components/InputField), so all the properties are inherited.
 
@@ -46,7 +45,7 @@ The default usage extends the InputField from [vue-interface](https://github.com
 
     <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
 
-## Autofill fields
+### Autofill fields
 
 Sometimes you may need to autofill address components into other input fields...
 
@@ -94,7 +93,7 @@ Sometimes you may need to autofill address components into other input fields...
         </div>
     </div>
 
-## Commands
+### Commands
 
 `npm run dev`
 
