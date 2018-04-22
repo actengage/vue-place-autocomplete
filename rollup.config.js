@@ -62,14 +62,12 @@ const LIVERELOAD_OPTIONS = {
 
 // Define the list of output globals
 const OUTPUT_GLOBALS = {
-    'vue': 'Vue',
-    'lodash': 'lodash'
+    'vue': 'Vue'
 };
 
 // Define an array of external packages to not include in the bundle
 const EXTERNAL = [
-    'vue',
-    'lodash'
+    'vue'
 ];
 
 // Define the plugins used for the rollup process
@@ -124,7 +122,7 @@ if(process.env.ROLLUP_WATCH == 'true') {
 }
 
 // Export the config object
-export default [{
+export default {
     input: MAINJS,
     output: {
         name: NAMESPACE,
@@ -137,17 +135,4 @@ export default [{
     watch: WATCH_OPTIONS,
     external: EXTERNAL,
     plugins: plugins
-}, {
-    input: MAINJS,
-    output: {
-        name: NAMESPACE,
-        format: 'es',
-        file: `${DIST}${FILENAME}.es.js`,
-        sourcemap: (process.env.ROLLUP_WATCH ? 'inline' : true),
-        globals: OUTPUT_GLOBALS,
-        exports: 'named',
-    },
-    watch: WATCH_OPTIONS,
-    external: EXTERNAL,
-    plugins: plugins
-}];
+};

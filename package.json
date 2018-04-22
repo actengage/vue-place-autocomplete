@@ -44,8 +44,9 @@
         "vue-template-compiler": "^2.5.16"
     },
     "dependencies": {
+        "lodash-es": "^4.17.8",
         "vue": "^2.5.16",
-        "lodash": "^4.17.5"
+        "vue-interface": "^0.1.10"
     },
     "scripts": {
         "build": "rollup -c",
