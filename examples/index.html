@@ -28,13 +28,11 @@
 
             <p>The default usage extends the InputField from vue-interface, so all the properties are inherited.</p>
 
-            <div v-if="field1" class="alert alert-info">
-                Current Value: {{field1}}
+            <div class="py-5">
+                <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
             </div>
 
-            <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
-
-            <hr>
+            <hr style="margin-top:1000px">
 
             <h3>Autofill fields</h3>
 
@@ -53,7 +51,7 @@
                 v-place-autofill.country="country">
             </place-autocomplete-field>
 
-            <div class="card w-30">
+            <div class="card w-30" style="margin-bottom:1000px">
                 <div class="card-body">
                     <p><b class="card-title">Enter an address above and watch the fields below get auto-filled...</b></p>
 

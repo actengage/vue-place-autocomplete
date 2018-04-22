@@ -3,6 +3,13 @@
 This Vue component incorporates full support the Google Places and Geocoder API's a single input field.
 The goal is provide the most native and seamlessly integrated solution possible.
 
+#### Basic Usage
+![Basic Usage](./screenshots/basic-usage.gif)
+
+#### Autofill Additional Fields
+![Autofill Usage](./screenshots/autofill.gif)
+
+
 ### Features
 
 - Built for Bootstrap 4
