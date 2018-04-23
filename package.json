@@ -1,6 +1,6 @@
 {
     "name": "vue-place-autocomplete",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "main": "dist/vue-place-autocomplete.js",
     "module": "dist/vue-place-autocomplete.es.js",
     "devDependencies": {

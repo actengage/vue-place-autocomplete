@@ -62,7 +62,8 @@ const LIVERELOAD_OPTIONS = {
 
 // Define the list of output globals
 const OUTPUT_GLOBALS = {
-    'vue': 'Vue'
+    'vue': 'Vue',
+    'vue-interface': 'VueInterface'
 };
 
 // Define an array of external packages to not include in the bundle
