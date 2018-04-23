@@ -1,6 +1,6 @@
 {
     "name": "vue-place-autocomplete",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "main": "dist/vue-place-autocomplete.js",
     "module": "dist/vue-place-autocomplete.es.js",
     "devDependencies": {
@@ -57,7 +57,7 @@
         "release-patch": "npm version patch --no-git-tag-version; npm run release;",
         "release-minor": "npm version minor --no-git-tag-version; npm run release;",
         "release-major": "npm version major --no-git-tag-version; npm run release;",
-        "release": "npm run build; npm run uglify; npm run commit; npm publish;",
+        "release": "npm run build; npm run uglify; npm run commit; npm publish; git push;",
         "uglify": "rollup -c rollup.uglify.js"
     },
     "jest": {
