@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import each from 'lodash-es/each';
-import omitBy from 'lodash-es/omitBy';
-import isEmpty from 'lodash-es/isEmpty';
+import { each } from 'lodash';
+import { omitBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import script from 'vue-interface/src/Helpers/Script';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
 import FormGroup from 'vue-interface/src/Components/FormGroup';

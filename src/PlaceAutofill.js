@@ -1,8 +1,7 @@
-import map from 'lodash-es/map';
-//import each from 'lodash-es/each';
-import filter from 'lodash-es/filter';
-import isArray from 'lodash-es/isArray';
-import intersection from 'lodash-es/intersection';
+import { map } from 'lodash';
+import { filter } from 'lodash';
+import { isArray } from 'lodash';
+import { intersection } from 'lodash';
 
 const ALIASES = {
     'street': ['street_number', 'route', 'intersection'],

@@ -1,14 +1,8 @@
-import { mergeClasses } from 'vue-interface';
-
-console.log(mergeClasses);
-
-/*
+import mergeClasses from 'vue-interface/src/Plugins/MergeClasses';
 import PlaceAutofill from './PlaceAutofill';
 import PlaceAutocompleteField from './PlaceAutocompleteField';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
 import PlaceAutocompleteListItem from './PlaceAutocompleteListItem';
-
-import mergeClasses from 'vue-interface/src/Plugins/MergeClasses';
 
 export {
     PlaceAutocompleteField,
@@ -29,4 +23,3 @@ if(window && window.Vue) {
 }
 
 export default install;
-*/
