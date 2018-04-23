@@ -63,12 +63,16 @@ const LIVERELOAD_OPTIONS = {
 // Define the list of output globals
 const OUTPUT_GLOBALS = {
     'vue': 'Vue',
-    'vue-interface': 'VueInterface'
+    'vue-interface': 'VueInterface',
+    'axios': 'axios',
+    'moment': 'moment'
 };
 
 // Define an array of external packages to not include in the bundle
 const EXTERNAL = [
-    'vue'
+    'vue',
+    'axios',
+    'moment'
 ];
 
 // Define the plugins used for the rollup process
@@ -88,10 +92,7 @@ const plugins = [
         extensions: ['.vue', '.js']
     }),
     resolve({
-        main: true,
-        jsnext: true,
-        browser: true,
-        extensions: [ '.js', '.vue']
+        extensions: [ '.js', '.css', '.scss', '.vue']
     }),
     commonjs({
         include: NODE_MODULES,
