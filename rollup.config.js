@@ -122,7 +122,7 @@ if(process.env.ROLLUP_WATCH == 'true') {
 }
 
 // Export the config object
-export default {
+export default [{
     input: MAINJS,
     output: {
         name: NAMESPACE,
@@ -135,4 +135,17 @@ export default {
     watch: WATCH_OPTIONS,
     external: EXTERNAL,
     plugins: plugins
-};
+},{
+    input: MAINJS,
+    output: {
+        name: NAMESPACE,
+        format: 'es',
+        file: `${DIST}${FILENAME}.es.js`,
+        sourcemap: (process.env.ROLLUP_WATCH ? 'inline' : true),
+        globals: OUTPUT_GLOBALS,
+        exports: 'named',
+    },
+    watch: WATCH_OPTIONS,
+    external: EXTERNAL,
+    plugins: plugins
+}];
