@@ -1,5 +1,5 @@
 <template>
-    <div class="autocomplete-field" :class="{'was-validated': error || errors[name]}" @keydown="onKeydown" @keyup="onKeyup">
+    <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup">
         <input-field
             v-model="query"
             :name="name"

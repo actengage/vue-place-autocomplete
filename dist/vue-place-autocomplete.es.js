@@ -5320,9 +5320,6 @@ var PlaceAutocompleteField = {
 
     return _c('div', {
       staticClass: "autocomplete-field",
-      class: {
-        'was-validated': _vm.error || _vm.errors[_vm.name]
-      },
       on: {
         "keydown": _vm.onKeydown,
         "keyup": _vm.onKeyup
