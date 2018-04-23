@@ -25,15 +25,21 @@ function extract(type, geocoder) {
     return values.length ? values.join(' ') : null;
 }
 
+function update(binding, vnode, values) {
+    const props = binding.expression.split('.');
+    const prop = props.pop();
+    const model = props.reduce((carry, i) => carry[i], vnode.context);
+
+    model[prop] = values.length ? values.join(' ') : null;
+}
+
 export default {
 
     bind(el, binding, vnode) {
         vnode.componentInstance.$on('select', (place, geocoder) => {
-            const values = filter(map(binding.modifiers, (value, modifier) => {
+            update(binding, vnode, filter(map(binding.modifiers, (value, modifier) => {
                 return extract(modifier, geocoder);
-            }));
-
-            vnode.context[binding.expression] = values.length ? values.join(' ') : null;
+            })));
         });
     }
 

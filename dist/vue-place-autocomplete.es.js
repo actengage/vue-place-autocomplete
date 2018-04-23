@@ -3251,13 +3251,21 @@ function extract(type, geocoder) {
   return values.length ? values.join(' ') : null;
 }
 
+function update(binding, vnode, values) {
+  var props = binding.expression.split('.');
+  var prop = props.pop();
+  var model = props.reduce(function (carry, i) {
+    return carry[i];
+  }, vnode.context);
+  model[prop] = values.length ? values.join(' ') : null;
+}
+
 var PlaceAutofill = {
   bind: function bind(el, binding, vnode) {
     vnode.componentInstance.$on('select', function (place, geocoder) {
-      var values = filter(map(binding.modifiers, function (value, modifier) {
+      update(binding, vnode, filter(map(binding.modifiers, function (value, modifier) {
         return extract(modifier, geocoder);
-      }));
-      vnode.context[binding.expression] = values.length ? values.join(' ') : null;
+      })));
     });
   }
 };
@@ -3731,11 +3739,15 @@ function append(script) {
 }
 
 function script(url) {
-    return new Promise((resolve, reject) => {
+    if(loaded[url] instanceof Promise) {
+        return loaded[url];
+    }
+
+    return loaded[url] = new Promise((resolve, reject) => {
         try {
             if(!loaded[url]) {
-                append(element(url)).addEventListener('load', e => {
-                    resolve(loaded[url] = e);
+                append(element(url)).addEventListener('load', event => {
+                    resolve(loaded[url] = event);
                 });
             }
             else {
@@ -3870,7 +3882,12 @@ function components(Vue, components) {
 
 function directive(Vue, name, def) {
     if(!VueInstaller.$directives[name]) {
-        Vue.directive(name, VueInstaller.$directives[name] = def);
+        if(isFunction(def)) {
+            Vue.use(VueInstaller.$directives[name] = def);
+        }
+        else {
+            Vue.directive(name, def);
+        }
     }
 }
 
@@ -3888,6 +3905,134 @@ const plugin$1 = VueInstaller.use({
         });
     }
 
+});
+
+/**
+ * Copies properties of `source` to `object`.
+ *
+ * @private
+ * @param {Object} source The object to copy properties from.
+ * @param {Array} props The property identifiers to copy.
+ * @param {Object} [object={}] The object to copy properties to.
+ * @param {Function} [customizer] The function to customize copied values.
+ * @returns {Object} Returns `object`.
+ */
+function copyObject(source, props, object, customizer) {
+  var isNew = !object;
+  object || (object = {});
+
+  var index = -1,
+      length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : undefined;
+
+    if (newValue === undefined) {
+      newValue = source[key];
+    }
+    if (isNew) {
+      baseAssignValue(object, key, newValue);
+    } else {
+      assignValue(object, key, newValue);
+    }
+  }
+  return object;
+}
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+/**
+ * Creates a function like `_.assign`.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @returns {Function} Returns the new assigner function.
+ */
+function createAssigner(assigner) {
+  return baseRest(function(object, sources) {
+    var index = -1,
+        length = sources.length,
+        customizer = length > 1 ? sources[length - 1] : undefined,
+        guard = length > 2 ? sources[2] : undefined;
+
+    customizer = (assigner.length > 3 && typeof customizer == 'function')
+      ? (length--, customizer)
+      : undefined;
+
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? undefined : customizer;
+      length = 1;
+    }
+    object = Object(object);
+    while (++index < length) {
+      var source = sources[index];
+      if (source) {
+        assigner(object, source, index, customizer);
+      }
+    }
+    return object;
+  });
+}
+
+/**
+ * This method is like `_.assign` except that it iterates over own and
+ * inherited source properties.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias extend
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see _.assign
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * function Bar() {
+ *   this.c = 3;
+ * }
+ *
+ * Foo.prototype.b = 2;
+ * Bar.prototype.d = 4;
+ *
+ * _.assignIn({ 'a': 0 }, new Foo, new Bar);
+ * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
+ */
+var assignIn = createAssigner(function(object, source) {
+  copyObject(source, keysIn(source), object);
 });
 
 /**
@@ -4584,6 +4729,136 @@ var Colorable = {
 
 }
 
+var Screenreaders = {
+
+    props: {
+
+        /**
+         * Should show only for screenreaders
+         *
+         * @property Boolean
+         */
+        srOnly: Boolean,
+
+        /**
+         * Should be focusable for screenreaders
+         *
+         * @property Boolean
+         */
+        srOnlyFocusable: Boolean
+
+    },
+
+    computed: {
+        screenreaderClasses() {
+            return {
+                'sr-only': this.srOnly,
+                'sr-only-focusable': this.srOnlyFocusable,
+            };
+        }
+    }
+
+}
+
+var HelpText = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('small',{staticClass:"form-text",class:_vm.classes},[_vm._t("default")],2)},staticRenderFns: [],
+
+    name: 'help-text',
+
+    mixins: [
+        Colorable,
+        Screenreaders
+    ],
+
+    computed: {
+        classes() {
+            return assignIn({}, this.screenreaderClasses, this.colorableClasses);
+        }
+    }
+
+}
+
+const plugin$2 = VueInstaller.use({
+
+    install(Vue, options) {
+        VueInstaller.components({
+            HelpText
+        });
+    }
+
+});
+
+var FormLabel = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('label',{class:_vm.classes},[_vm._t("default")],2)},staticRenderFns: [],
+
+    name: 'form-label',
+
+    mixins: [
+        Colorable,
+        Screenreaders
+    ],
+
+    computed: {
+        classes() {
+            return assignIn({}, this.screenreaderClasses, this.colorableClasses);
+        }
+    }
+
+}
+
+const plugin$3 = VueInstaller.use({
+
+    install(Vue, options) {
+        VueInstaller.components({
+            FormLabel
+        });
+    }
+
+});
+
+var FormFeedback = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:{'invalid-feedback': _vm.invalid, 'valid-feedback': _vm.valid && !_vm.invalid}},[_vm._t("default",[_vm._v(_vm._s(_vm.label))])],2)},staticRenderFns: [],
+
+    name: 'form-feedback',
+
+    mixins: [
+        Colorable
+    ],
+
+    props: {
+
+        /**
+         * The value of label element. If no value, no label will appear.
+         *
+         * @property String
+         */
+        label: String,
+
+        /**
+         * Should the feedback marked as invalid
+         *
+         * @property String
+         */
+        invalid: Boolean,
+
+        /**
+         * Should the feedback marked as invalid
+         *
+         * @property String
+         */
+        valid: Boolean
+
+    }
+
+}
+
+const plugin$4 = VueInstaller.use({
+
+    install(Vue, options) {
+        VueInstaller.components({
+            FormFeedback
+        });
+    }
+
+});
+
 var FormControl = {
 
     props: {
@@ -4848,7 +5123,7 @@ var FormControl = {
 
 }
 
-var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form-group',[_vm._t("label",[(_vm.label || _vm.hasDefaultSlot)?_c('form-label',{attrs:{"for":_vm.id}},[_vm._t("default",[_vm._v(_vm._s(_vm.label))])],2):_vm._e()]),_vm._v(" "),_vm._t("control",[_c('input',{directives:[{name:"bind-events",rawName:"v-bind-events",value:(_vm.bindEvents),expression:"bindEvents"}],class:_vm.$mergeClasses(_vm.controlClasses, _vm.colorableClasses),attrs:{"id":_vm.id,"type":_vm.type,"errors":_vm.errors,"placeholder":_vm.placeholder,"required":_vm.required,"disabled":_vm.disabled || _vm.readonly,"readonly":_vm.readonly,"pattern":_vm.pattern,"aria-label":_vm.label,"aria-describedby":_vm.id},domProps:{"value":_vm.value},on:{"input":function($event){_vm.updated($event.target.value);}}})]),_vm._v(" "),_vm._t("help",[(_vm.helpText)?_c('help-text',{domProps:{"innerHTML":_vm._s(_vm.helpText)}}):_vm._e()]),_vm._v(" "),_vm._t("feedback",[(_vm.validFeedback)?_c('form-feedback',{attrs:{"valid":""},domProps:{"innerHTML":_vm._s(_vm.validFeedback)}}):_vm._e(),_vm._v(" "),(_vm.invalidFeedback)?_c('form-feedback',{attrs:{"invalid":""},domProps:{"innerHTML":_vm._s(_vm.invalidFeedback)}}):_vm._e()])],2)},staticRenderFns: [],
+var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form-group',[_vm._t("label",[(_vm.label || _vm.hasDefaultSlot)?_c('form-label',{attrs:{"for":_vm.id},domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()]),_vm._v(" "),_vm._t("control",[_c('input',{directives:[{name:"bind-events",rawName:"v-bind-events",value:(_vm.bindEvents),expression:"bindEvents"}],class:_vm.$mergeClasses(_vm.controlClasses, _vm.colorableClasses),attrs:{"id":_vm.id,"type":_vm.type,"placeholder":_vm.placeholder,"required":_vm.required,"disabled":_vm.disabled || _vm.readonly,"readonly":_vm.readonly,"pattern":_vm.pattern,"aria-label":_vm.label,"aria-describedby":_vm.id},domProps:{"value":_vm.value},on:{"input":function($event){_vm.updated($event.target.value);}}})]),_vm._v(" "),_vm._t("default"),_vm._v(" "),_vm._t("help",[(_vm.helpText)?_c('help-text',{domProps:{"innerHTML":_vm._s(_vm.helpText)}}):_vm._e()]),_vm._v(" "),_vm._t("feedback",[(_vm.validFeedback)?_c('form-feedback',{attrs:{"valid":""},domProps:{"innerHTML":_vm._s(_vm.validFeedback)}}):_vm._e(),_vm._v(" "),(_vm.invalidFeedback)?_c('form-feedback',{attrs:{"invalid":""},domProps:{"innerHTML":_vm._s(_vm.invalidFeedback)}}):_vm._e()])],2)},staticRenderFns: [],
 
     name: 'input-field',
 
@@ -4856,6 +5131,13 @@ var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var 
         Colorable,
         FormControl
     ],
+
+    components: {
+        HelpText,
+        FormGroup,
+        FormLabel,
+        FormFeedback
+    },
 
     props: {
 
@@ -4873,7 +5155,7 @@ var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var 
 
 }
 
-const plugin$2 = VueInstaller.use({
+const plugin$5 = VueInstaller.use({
 
     install(Vue, options) {
         VueInstaller.components({
@@ -4945,134 +5227,6 @@ var ActivityIndicatorDots = {
     extends: BaseType
 }
 
-/**
- * Copies properties of `source` to `object`.
- *
- * @private
- * @param {Object} source The object to copy properties from.
- * @param {Array} props The property identifiers to copy.
- * @param {Object} [object={}] The object to copy properties to.
- * @param {Function} [customizer] The function to customize copied values.
- * @returns {Object} Returns `object`.
- */
-function copyObject(source, props, object, customizer) {
-  var isNew = !object;
-  object || (object = {});
-
-  var index = -1,
-      length = props.length;
-
-  while (++index < length) {
-    var key = props[index];
-
-    var newValue = customizer
-      ? customizer(object[key], source[key], key, object, source)
-      : undefined;
-
-    if (newValue === undefined) {
-      newValue = source[key];
-    }
-    if (isNew) {
-      baseAssignValue(object, key, newValue);
-    } else {
-      assignValue(object, key, newValue);
-    }
-  }
-  return object;
-}
-
-/**
- * Checks if the given arguments are from an iteratee call.
- *
- * @private
- * @param {*} value The potential iteratee value argument.
- * @param {*} index The potential iteratee index or key argument.
- * @param {*} object The potential iteratee object argument.
- * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
- *  else `false`.
- */
-function isIterateeCall(value, index, object) {
-  if (!isObject(object)) {
-    return false;
-  }
-  var type = typeof index;
-  if (type == 'number'
-        ? (isArrayLike(object) && isIndex(index, object.length))
-        : (type == 'string' && index in object)
-      ) {
-    return eq(object[index], value);
-  }
-  return false;
-}
-
-/**
- * Creates a function like `_.assign`.
- *
- * @private
- * @param {Function} assigner The function to assign values.
- * @returns {Function} Returns the new assigner function.
- */
-function createAssigner(assigner) {
-  return baseRest(function(object, sources) {
-    var index = -1,
-        length = sources.length,
-        customizer = length > 1 ? sources[length - 1] : undefined,
-        guard = length > 2 ? sources[2] : undefined;
-
-    customizer = (assigner.length > 3 && typeof customizer == 'function')
-      ? (length--, customizer)
-      : undefined;
-
-    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-      customizer = length < 3 ? undefined : customizer;
-      length = 1;
-    }
-    object = Object(object);
-    while (++index < length) {
-      var source = sources[index];
-      if (source) {
-        assigner(object, source, index, customizer);
-      }
-    }
-    return object;
-  });
-}
-
-/**
- * This method is like `_.assign` except that it iterates over own and
- * inherited source properties.
- *
- * **Note:** This method mutates `object`.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @alias extend
- * @category Object
- * @param {Object} object The destination object.
- * @param {...Object} [sources] The source objects.
- * @returns {Object} Returns `object`.
- * @see _.assign
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * function Bar() {
- *   this.c = 3;
- * }
- *
- * Foo.prototype.b = 2;
- * Bar.prototype.d = 4;
- *
- * _.assignIn({ 'a': 0 }, new Foo, new Bar);
- * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
- */
-var assignIn = createAssigner(function(object, source) {
-  copyObject(source, keysIn(source), object);
-});
-
 var ActivityIndicatorSpinner = {
 
     name: 'activity-indicator-spinner',
@@ -5135,7 +5289,7 @@ var ActivityIndicator = {render: function(){var _vm=this;var _h=_vm.$createEleme
 
 }
 
-const plugin$3 = VueInstaller.use({
+const plugin$6 = VueInstaller.use({
 
     install(Vue, options) {
         VueInstaller.components({

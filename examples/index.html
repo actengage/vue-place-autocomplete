@@ -28,11 +28,7 @@
 
             <p>The default usage extends the InputField from vue-interface, so all the properties are inherited.</p>
 
-            <div class="py-5">
-                <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
-            </div>
-
-            <hr style="margin-top:1000px">
+            <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
 
             <h3>Autofill fields</h3>
 
@@ -44,40 +40,40 @@
                 name="field2"
                 api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"
                 placeholder="Enter an an address, zipcode, or location"
-                v-place-autofill.street="street"
-                v-place-autofill.city="city"
-                v-place-autofill.state="state"
-                v-place-autofill.zipcode="zip"
-                v-place-autofill.country="country">
+                v-place-autofill.street="form.street"
+                v-place-autofill.city="form.city"
+                v-place-autofill.state="form.state"
+                v-place-autofill.zipcode="form.zip"
+                v-place-autofill.country="form.country">
             </place-autocomplete-field>
 
-            <div class="card w-30" style="margin-bottom:1000px">
+            <div class="card w-30">
                 <div class="card-body">
                     <p><b class="card-title">Enter an address above and watch the fields below get auto-filled...</b></p>
 
                     <p>
                         <label>Street</label><br>
-                        <input name="street" v-model="street" class="form-control"/>
+                        <input name="street" v-model="form.street" class="form-control"/>
                     </p>
                     <p>
                         <label>Addr2</label><br>
-                        <input name="addr2" v-model="addr2" class="form-control"/>
+                        <input name="addr2" v-model="form.addr2" class="form-control"/>
                     </p>
                     <p>
                         <label>City</label><br>
-                        <input name="city" v-model="city" class="form-control"/>
+                        <input name="city" v-model="form.city" class="form-control"/>
                     </p>
                     <p>
                         <label>State</label><br>
-                        <input name="state" v-model="state" class="form-control"/>
+                        <input name="state" v-model="form.state" class="form-control"/>
                     </p>
                     <p>
                         <label>Zip</label><br>
-                        <input name="zip" v-model="zip" class="form-control"/>
+                        <input name="zip" v-model="form.zip" class="form-control"/>
                     </p>
                     <p>
                         <label>United States</label><br>
-                        <input name="country" v-model="country" class="form-control"/>
+                        <input name="country" v-model="form.country" class="form-control"/>
                     </p>
                 </div>
             </div>
@@ -101,7 +97,15 @@
                         city: null,
                         state: null,
                         zip: null,
-                        country: null
+                        country: null,
+                        form: {
+                            street: null,
+                            addr2: null,
+                            city: null,
+                            state: null,
+                            zip: null,
+                            country: null
+                        }
                     }
                 }
             });
