@@ -42,7 +42,7 @@ const NODE_MODULES = `${__dirname}/node_modules/**`;
 // The options for the serve() plugin
 const SERVE_OPTIONS = {
     open: true,
-    // port: 10002,
+    port: 10002,
     contentBase: './',
     host: 'localhost',
     historyApiFallback: true
