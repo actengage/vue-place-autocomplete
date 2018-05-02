@@ -1,6 +1,6 @@
 {
     "name": "vue-place-autocomplete",
-    "version": "0.0.15",
+    "version": "0.0.16",
     "main": "./dist/vue-place-autocomplete.js",
     "module": "./dist/vue-place-autocomplete.es.js",
     "devDependencies": {
@@ -48,7 +48,7 @@
     "dependencies": {
         "lodash-es": "^4.17.8",
         "vue": "^2.5.16",
-        "vue-interface": "^0.1.21"
+        "vue-interface": "^0.1.22"
     },
     "scripts": {
         "build": "rollup -c",
