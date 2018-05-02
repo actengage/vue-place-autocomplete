@@ -22850,7 +22850,7 @@ var PlaceAutocompleteField = {
         "aria-describedby": _vm.id,
         "label": _vm.label,
         "errors": _vm.errors,
-        "autocomplete": "off"
+        "autocomplete": "no"
       },
       on: {
         "input": _vm.updated,

@@ -14,7 +14,7 @@
             :aria-describedby="id"
             :label="label"
             :errors="errors"
-            autocomplete="off"
+            autocomplete="no"
             @input="updated"
             @focus="onFocus"
             @blur="onBlur">
