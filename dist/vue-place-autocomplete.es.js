@@ -21451,12 +21451,12 @@ var ALIASES = {
   'county': ['administrative_area_level_2']
 };
 
-function extract(type, geocoder) {
+function extract(type, modifiers, geocoder) {
   var types = ALIASES[type] || (isArray_1(type) ? type : [type]);
 
   var values = filter_1(map_1(geocoder.address_components, function (component) {
     if (intersection_1(component.types, types).length) {
-      return component.long_name;
+      return component[modifiers.short ? 'short_name' : 'long_name'];
     }
   }));
 
@@ -21469,15 +21469,13 @@ function update$1(binding, vnode, values) {
   var model = props.reduce(function (carry, i) {
     return carry[i];
   }, vnode.context);
-  model[prop] = values.length ? values.join(' ') : null;
+  model[prop] = isArray_1(values) ? values.join(' ') : values;
 }
 
 var PlaceAutofill = {
   bind: function bind(el, binding, vnode) {
     vnode.componentInstance.$on('select', function (place, geocoder) {
-      update$1(binding, vnode, filter_1(map_1(binding.modifiers, function (value, modifier) {
-        return extract(modifier, geocoder);
-      })));
+      return update$1(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
     });
   }
 };

@@ -40,11 +40,12 @@
                 name="field2"
                 api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"
                 placeholder="Enter an an address, zipcode, or location"
-                v-place-autofill.street="form.street"
-                v-place-autofill.city="form.city"
-                v-place-autofill.state="form.state"
-                v-place-autofill.zipcode="form.zip"
-                v-place-autofill.country="form.country">
+                v-place-autofill:street="form.street"
+                v-place-autofill:city="form.city"
+                v-place-autofill:state.long="form.state"
+                v-place-autofill:state.short="form.state_abbr"
+                v-place-autofill:zipcode="form.zip"
+                v-place-autofill:country="form.country">
             </place-autocomplete-field>
 
             <div class="card w-30">
@@ -66,6 +67,10 @@
                     <p>
                         <label>State</label><br>
                         <input name="state" v-model="form.state" class="form-control"/>
+                    </p>
+                    <p>
+                        <label>State (Abbreviated)</label><br>
+                        <input name="state" v-model="form.state_abbr" class="form-control"/>
                     </p>
                     <p>
                         <label>Zip</label><br>

@@ -1,6 +1,7 @@
 import { map } from 'lodash';
 import { filter } from 'lodash';
 import { isArray } from 'lodash';
+import { isNull } from 'lodash';
 import { intersection } from 'lodash';
 
 const ALIASES = {
@@ -12,12 +13,12 @@ const ALIASES = {
     'county': ['administrative_area_level_2']
 };
 
-function extract(type, geocoder) {
+function extract(type, modifiers, geocoder) {
     const types = ALIASES[type] || (isArray(type) ? type : [type]);
 
     const values = filter(map(geocoder.address_components, component => {
         if(intersection(component.types, types).length) {
-            return component.long_name;
+            return component[modifiers.short ? 'short_name' : 'long_name'];
         }
     }));
 
@@ -28,19 +29,15 @@ function update(binding, vnode, values) {
     const props = binding.expression.split('.');
     const prop = props.pop();
     const model = props.reduce((carry, i) => carry[i], vnode.context);
-
-    model[prop] = values.length ? values.join(' ') : null;
+    model[prop] = isArray(values) ? values.join(' ') : values;
 }
 
 export default {
 
     bind(el, binding, vnode) {
         vnode.componentInstance.$on('select', (place, geocoder) => {
-            update(binding, vnode, filter(map(binding.modifiers, (value, modifier) => {
-                return extract(modifier, geocoder);
-            })));
+            return update(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
         });
     }
-
 
 };
