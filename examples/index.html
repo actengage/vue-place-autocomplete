@@ -25,13 +25,13 @@
             <hr>
 
             <h3>Default Usage</h3>
-
             <p>The default usage extends the InputField from vue-interface, so all the properties are inherited.</p>
 
             <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
 
-            <h3>Autofill fields</h3>
+            <hr>
 
+            <h3>Autofill fields</h3>
             <p>Sometimes you may need to autofill address components into other input fields...</p>
 
             <place-autocomplete-field
@@ -83,6 +83,22 @@
                 </div>
             </div>
 
+            <hr>
+
+            <h3>Autofill the auto-complete field</h3>
+            <p>If you are using the address field and then populating the address components in additional fields, then it may be the case that you need to update the address field with the address component overriding the user input.</p>
+
+            <place-autocomplete-field
+                v-model="field3"
+                label="Address"
+                name="field3"
+                api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"
+                placeholder="Enter an an address, zipcode, or location"
+                v-place-autofill:street.query="field3">
+            </place-autocomplete-field>
+
+            <div style="min-height: 400px;"></div>
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
@@ -97,6 +113,7 @@
                     return {
                         field1: null,
                         field2: null,
+                        field3: null,
                         street: null,
                         addr2: null,
                         city: null,

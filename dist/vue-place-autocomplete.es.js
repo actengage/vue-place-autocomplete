@@ -21463,19 +21463,27 @@ function extract(type, modifiers, geocoder) {
   return values.length ? values.join(' ') : null;
 }
 
-function update$1(binding, vnode, values) {
+function update$1(binding, vnode, value) {
   var props = binding.expression.split('.');
   var prop = props.pop();
   var model = props.reduce(function (carry, i) {
     return carry[i];
   }, vnode.context);
-  model[prop] = isArray_1(values) ? values.join(' ') : values;
+  value = isArray_1(value) ? value.join(' ') : value;
+
+  if (binding.modifiers.query) {
+    vnode.componentInstance.query = value;
+  }
+
+  return model[prop] = value;
 }
 
 var PlaceAutofill = {
   bind: function bind(el, binding, vnode) {
     vnode.componentInstance.$on('select', function (place, geocoder) {
-      return update$1(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
+      vnode.context.$nextTick(function () {
+        update$1(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
+      });
     });
   }
 };
