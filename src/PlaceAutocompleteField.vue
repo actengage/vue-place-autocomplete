@@ -70,10 +70,21 @@ export default {
 
     props: {
 
-        // Google Maps options
         'api-key': {
+            type: String,
             required: true,
-            type: String
+        },
+
+        'base-uri': {
+            type: String,
+            default: 'https://maps.googleapis.com/maps/api/js',
+        },
+
+        'libraries': {
+            type: Array,
+            default() {
+                return ['geometry', 'places'];
+            }
         },
 
         'bounds': {
@@ -271,15 +282,11 @@ export default {
     },
 
     mounted() {
-        script('https://maps.googleapis.com/maps/api/js?key='+this.apiKey+'&libraries=places').then(() => {
+        script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
             this.$geocoder = new google.maps.Geocoder();
             this.$service = new google.maps.places.AutocompleteService();
+            this.$emit('loaded');
         });
-
-        //this.$on('place:changed', this.placeChanged);
-        //this.$on('prediction:blur', this.predictionBlur);
-        //this.$on('prediction:focus', this.predictionFocus);
-        //this.$on('prediction:select', this.predictionSelect);
     },
 
     data() {

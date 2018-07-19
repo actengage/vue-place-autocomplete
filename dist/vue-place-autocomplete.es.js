@@ -22963,10 +22963,19 @@ var PlaceAutocompleteField = {
     PlaceAutocompleteList: PlaceAutocompleteList
   },
   props: {
-    // Google Maps options
     'api-key': {
-      required: true,
-      type: String
+      type: String,
+      required: true
+    },
+    'base-uri': {
+      type: String,
+      default: 'https://maps.googleapis.com/maps/api/js'
+    },
+    'libraries': {
+      type: Array,
+      default: function _default() {
+        return ['geometry', 'places'];
+      }
     },
     'bounds': {
       type: [Boolean, Object, String],
@@ -23157,13 +23166,12 @@ var PlaceAutocompleteField = {
   mounted: function mounted() {
     var _this6 = this;
 
-    script('https://maps.googleapis.com/maps/api/js?key=' + this.apiKey + '&libraries=places').then(function () {
+    script("".concat(this.baseUri, "?key=").concat(this.apiKey, "&libraries=").concat(this.libraries.join(','))).then(function () {
       _this6.$geocoder = new google.maps.Geocoder();
       _this6.$service = new google.maps.places.AutocompleteService();
-    }); //this.$on('place:changed', this.placeChanged);
-    //this.$on('prediction:blur', this.predictionBlur);
-    //this.$on('prediction:focus', this.predictionFocus);
-    //this.$on('prediction:select', this.predictionSelect);
+
+      _this6.$emit('loaded');
+    });
   },
   data: function data() {
     return {
@@ -23199,7 +23207,6 @@ var PlaceAutocompleteField = {
 };
 
 function install(Vue, options) {
-  console.log(Vue);
   Vue.use(MergeClasses$1);
   Vue.directive('place-autofill', PlaceAutofill);
   Vue.component('place-autocomplete-field', PlaceAutocompleteField);

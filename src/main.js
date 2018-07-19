@@ -11,8 +11,6 @@ export {
 }
 
 function install(Vue, options) {
-    console.log(Vue);
-    
     Vue.use(mergeClasses);
     Vue.directive('place-autofill', PlaceAutofill);
     Vue.component('place-autocomplete-field', PlaceAutocompleteField);
