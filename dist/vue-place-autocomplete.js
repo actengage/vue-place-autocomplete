@@ -22004,17 +22004,17 @@
                 if(loaded[url] instanceof Promise) {
                     return loaded[url];
                 }
+                else if(loaded[url]) {
+                    return new Promise((resolve, reject) => {
+                        resolve(loaded[url]);
+                    });
+                }
 
                 return loaded[url] = new Promise((resolve, reject) => {
                     try {
-                        if(!loaded[url]) {
-                            append(element(url)).addEventListener('load', event => {
-                                resolve(loaded[url] = event);
-                            });
-                        }
-                        else {
-                            resolve(loaded[url]);
-                        }
+                        append(element(url)).addEventListener('load', event => {
+                            resolve(loaded[url] = event);
+                        });
                     }
                     catch(e) {
                         reject(e);
