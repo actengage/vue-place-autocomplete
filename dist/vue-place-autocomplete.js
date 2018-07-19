@@ -23226,6 +23226,7 @@
               window.Vue.use(install);
             }
 
+            exports.PlaceAutofill = PlaceAutofill;
             exports.PlaceAutocompleteField = PlaceAutocompleteField;
             exports.PlaceAutocompleteList = PlaceAutocompleteList;
             exports.PlaceAutocompleteListItem = PlaceAutocompleteListItem;

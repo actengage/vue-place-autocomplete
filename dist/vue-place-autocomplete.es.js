@@ -23221,5 +23221,5 @@ if (window && window.Vue) {
 }
 
 export default install;
-export { PlaceAutocompleteField, PlaceAutocompleteList, PlaceAutocompleteListItem };
+export { PlaceAutofill, PlaceAutocompleteField, PlaceAutocompleteList, PlaceAutocompleteListItem };
 //# sourceMappingURL=vue-place-autocomplete.es.js.map

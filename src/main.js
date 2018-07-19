@@ -5,6 +5,7 @@ import PlaceAutocompleteList from './PlaceAutocompleteList';
 import PlaceAutocompleteListItem from './PlaceAutocompleteListItem';
 
 export {
+    PlaceAutofill,
     PlaceAutocompleteField,
     PlaceAutocompleteList,
     PlaceAutocompleteListItem
