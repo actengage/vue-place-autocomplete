@@ -14,10 +14,20 @@ const ALIASES = {
 };
 
 function extract(type, modifiers, geocoder) {
-    const types = ALIASES[type] || (isArray(type) ? type : [type]);
+    if(geocoder[type]) {
+        return geocoder[type];
+    }
+    else if(type === 'latitude') {
+        return geocoder.geometry.location.lat();
+    }
+    else if(type === 'longitude') {
+        return geocoder.geometry.location.lng();
+    }
+
+    const aliases = ALIASES[type] || (isArray(type) ? type : [type]);
 
     const values = filter(map(geocoder.address_components, component => {
-        if(intersection(component.types, types).length) {
+        if(intersection(component.types, aliases).length) {
             return component[modifiers.short ? 'short_name' : 'long_name'];
         }
     }));

@@ -46,6 +46,8 @@
                 v-place-autofill:state.short="form.state_abbr"
                 v-place-autofill:zipcode="form.zip"
                 v-place-autofill:country="form.country"
+                v-place-autofill:latitude="form.latitude"
+                v-place-autofill:longitude="form.longitude"
                 v-place-autofill:street.short.query="field2">
             </place-autocomplete-field>
 
@@ -80,6 +82,14 @@
                     <p>
                         <label>United States</label><br>
                         <input name="country" v-model="form.country" class="form-control"/>
+                    </p>
+                    <p>
+                        <label>Latitude</label><br>
+                        <input name="latitude" v-model="form.latitude" class="form-control"/>
+                    </p>
+                    <p>
+                        <label>Longitude</label><br>
+                        <input name="longitude" v-model="form.longitude" class="form-control"/>
                     </p>
                 </div>
             </div>

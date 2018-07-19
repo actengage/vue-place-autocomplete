@@ -21454,10 +21454,18 @@ var ALIASES = {
 };
 
 function extract(type, modifiers, geocoder) {
-  var types = ALIASES[type] || (isArray_1(type) ? type : [type]);
+  if (geocoder[type]) {
+    return geocoder[type];
+  } else if (type === 'latitude') {
+    return geocoder.geometry.location.lat();
+  } else if (type === 'longitude') {
+    return geocoder.geometry.location.lng();
+  }
+
+  var aliases = ALIASES[type] || (isArray_1(type) ? type : [type]);
 
   var values = filter_1(map_1(geocoder.address_components, function (component) {
-    if (intersection_1(component.types, types).length) {
+    if (intersection_1(component.types, aliases).length) {
       return component[modifiers.short ? 'short_name' : 'long_name'];
     }
   }));
