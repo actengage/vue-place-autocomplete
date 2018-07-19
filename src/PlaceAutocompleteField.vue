@@ -289,6 +289,7 @@ export default {
 
             this.$geocoder = new google.maps.Geocoder();
             this.$service = new google.maps.places.AutocompleteService();
+            this.loaded = true;
             this.$emit('loaded');
         });
     },
@@ -298,8 +299,8 @@ export default {
             query: null,
             focus: null,
             activity: false,
+            loaded: false,
             predictions: false,
-            loaded: fase
             showPredictions: false
         };
     }

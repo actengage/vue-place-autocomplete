@@ -23166,9 +23166,12 @@ var PlaceAutocompleteField = {
   mounted: function mounted() {
     var _this6 = this;
 
+    console.log('PlaceAutocompleteField mounted');
     script("".concat(this.baseUri, "?key=").concat(this.apiKey, "&libraries=").concat(this.libraries.join(','))).then(function () {
+      console.log("script loaded: ".concat(_this6.baseUri, "?key=").concat(_this6.apiKey, "&libraries=").concat(_this6.libraries.join(',')));
       _this6.$geocoder = new google.maps.Geocoder();
       _this6.$service = new google.maps.places.AutocompleteService();
+      _this6.loaded = true;
 
       _this6.$emit('loaded');
     });
@@ -23178,6 +23181,7 @@ var PlaceAutocompleteField = {
       query: null,
       focus: null,
       activity: false,
+      loaded: false,
       predictions: false,
       showPredictions: false
     };
