@@ -1,4 +1,3 @@
-import mergeClasses from 'vue-interface/src/Plugins/MergeClasses';
 import PlaceAutofill from './PlaceAutofill';
 import PlaceAutocompleteField from './PlaceAutocompleteField';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
@@ -10,8 +9,7 @@ export {
     PlaceAutocompleteListItem
 }
 
-function install(vue, options) {
-    Vue.use(mergeClasses);
+function install(Vue, options) {
     Vue.directive('place-autofill', PlaceAutofill);
     Vue.component('place-autocomplete-field', PlaceAutocompleteField);
     Vue.component('place-autocomplete-list', PlaceAutocompleteList);
