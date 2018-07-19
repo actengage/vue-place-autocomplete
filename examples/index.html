@@ -45,7 +45,8 @@
                 v-place-autofill:state.long="form.state"
                 v-place-autofill:state.short="form.state_abbr"
                 v-place-autofill:zipcode="form.zip"
-                v-place-autofill:country="form.country">
+                v-place-autofill:country="form.country"
+                v-place-autofill:street.short.query="field2">
             </place-autocomplete-field>
 
             <div class="card w-30">
@@ -82,22 +83,6 @@
                     </p>
                 </div>
             </div>
-
-            <hr>
-
-            <h3>Autofill the auto-complete field</h3>
-            <p>If you are using the address field and then populating the address components in additional fields, then it may be the case that you need to update the address field with the address component overriding the user input.</p>
-
-            <place-autocomplete-field
-                v-model="field3"
-                label="Address"
-                name="field3"
-                api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"
-                placeholder="Enter an an address, zipcode, or location"
-                v-place-autofill:state.short.query="field3">
-            </place-autocomplete-field>
-
-            <div style="min-height: 400px;"></div>
 
         </div>
 
