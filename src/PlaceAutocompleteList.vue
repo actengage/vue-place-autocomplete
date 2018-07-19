@@ -9,9 +9,15 @@
 </template>
 
 <script>
+import PlaceAutocompleteListItem from './PlaceAutocompleteListItem';
+
 export default {
 
     name: 'place-autocomplete-list',
+
+    components: {
+        PlaceAutocompleteListItem
+    },
 
     props: {
 

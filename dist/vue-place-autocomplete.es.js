@@ -17900,25 +17900,27 @@ if (symIterator$1) {
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
-function MergeClasses(Vue, options) {
+function MergeClasses() {
+    const classes = {};
 
-    Vue.prototype.$mergeClasses = function() {
-        const classes = {};
+    forEach([].slice.call(arguments), arg => {
+        if(isObject(arg)) {
+            assignIn(classes, arg);
+        }
+        else if(isArray(arg)) {
+            merge(classes, arg);
+        }
+        else if(arg) {
+            classes[arg] = true;
+        }
+    });
 
-        forEach([].slice.call(arguments), arg => {
-            if(isObject(arg)) {
-                assignIn(classes, arg);
-            }
-            else if(isArray(arg)) {
-                merge(classes, arg);
-            }
-            else if(arg) {
-                classes[arg] = true;
-            }
-        });
+    return classes;
+}
 
-        return classes;
-    };
+function MergeClasses$1(Vue, options) {
+
+    Vue.prototype.$mergeClasses = MergeClasses;
 
 }
 
@@ -22014,6 +22016,56 @@ function script(url) {
     });
 }
 
+var PlaceAutocompleteListItem = {
+  render: function render() {
+    var _vm = this;
+
+    var _h = _vm.$createElement;
+
+    var _c = _vm._self._c || _h;
+
+    return _c('li', {
+      staticClass: "autocomplete-list-item",
+      on: {
+        "focus": _vm.onFocus,
+        "onBlur": _vm.onBlur
+      }
+    }, [_c('a', {
+      attrs: {
+        "href": "#"
+      },
+      on: {
+        "click": function click($event) {
+          $event.preventDefault();
+          return _vm.onClick($event);
+        },
+        "focus": _vm.onFocus,
+        "blur": _vm.onBlur
+      }
+    }, [_c('span', {
+      staticClass: "autocomplete-list-item-icon"
+    }), _vm._v(" "), _c('span', {
+      staticClass: "autocomplete-list-item-label"
+    }, [_vm._t("default")], 2)])]);
+  },
+  staticRenderFns: [],
+  name: 'place-autocomplete-list-item',
+  props: {
+    item: Object
+  },
+  methods: {
+    onBlur: function onBlur(event) {
+      this.$emit('blur', event, this);
+    },
+    onClick: function onClick(event) {
+      this.$emit('click', event, this);
+    },
+    onFocus: function onFocus(event) {
+      this.$emit('focus', event, this);
+    }
+  }
+};
+
 var PlaceAutocompleteList = {
   render: function render() {
     var _vm = this;
@@ -22042,6 +22094,9 @@ var PlaceAutocompleteList = {
   },
   staticRenderFns: [],
   name: 'place-autocomplete-list',
+  components: {
+    PlaceAutocompleteListItem: PlaceAutocompleteListItem
+  },
   props: {
     'items': {
       type: Array,
@@ -22165,13 +22220,13 @@ function prefix(subject, prefix, delimeter = '-') {
     const prefixer = (value, key) => {
         const string = key || value;
 
-        return [
+        return filter([
             prefix,
             string.replace(new RegExp(`^${prefix}${delimeter}?`), '')
-        ].join(delimeter);
+        ]).join(delimeter);
     };
 
-    if(isNull(subject) || isUndefined(subject)){
+    if(isBoolean(subject) || isNull(subject) || isUndefined(subject)) {
         return subject;
     }
 
@@ -22579,7 +22634,14 @@ var FormControl = {
          *
          * @property String
          */
-        helpText: String,
+        helpText: [Number, String],
+
+        /**
+         * The maxlength attribute
+         *
+         * @property String
+         */
+        maxlength: [Number, String]
 
     },
 
@@ -22590,7 +22652,7 @@ var FormControl = {
 
                 forEach(events, name => {
                     el.addEventListener(name, event => {
-                        vnode.context.$emit(name, event);
+                        vnode.context.$emit(name, event, this);
                     });
                 });
             }
@@ -22669,7 +22731,7 @@ var FormControl = {
 
 }
 
-var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form-group',[_vm._t("label",[(_vm.label || _vm.hasDefaultSlot)?_c('form-label',{attrs:{"for":_vm.id},domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()]),_vm._v(" "),_vm._t("control",[_c('input',{directives:[{name:"bind-events",rawName:"v-bind-events",value:(_vm.bindEvents),expression:"bindEvents"}],class:_vm.$mergeClasses(_vm.controlClasses, _vm.colorableClasses),attrs:{"id":_vm.id,"type":_vm.type,"placeholder":_vm.placeholder,"required":_vm.required,"disabled":_vm.disabled || _vm.readonly,"readonly":_vm.readonly,"pattern":_vm.pattern,"aria-label":_vm.label,"aria-describedby":_vm.id,"autocomplete":_vm.autocomplete},domProps:{"value":_vm.value},on:{"input":function($event){_vm.updated($event.target.value);}}})]),_vm._v(" "),_vm._t("default"),_vm._v(" "),_vm._t("help",[(_vm.helpText)?_c('help-text',{domProps:{"innerHTML":_vm._s(_vm.helpText)}}):_vm._e()]),_vm._v(" "),_vm._t("feedback",[(_vm.validFeedback)?_c('form-feedback',{attrs:{"valid":""},domProps:{"innerHTML":_vm._s(_vm.validFeedback)}}):_vm._e(),_vm._v(" "),(_vm.invalidFeedback)?_c('form-feedback',{attrs:{"invalid":""},domProps:{"innerHTML":_vm._s(_vm.invalidFeedback)}}):_vm._e()])],2)},staticRenderFns: [],
+var InputField = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form-group',[_vm._t("label",[(_vm.label || _vm.hasDefaultSlot)?_c('form-label',{attrs:{"for":_vm.id},domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()]),_vm._v(" "),_vm._t("control",[_c('input',{directives:[{name:"bind-events",rawName:"v-bind-events",value:(_vm.bindEvents),expression:"bindEvents"}],class:_vm.$mergeClasses(_vm.controlClasses, _vm.colorableClasses),attrs:{"id":_vm.id,"type":_vm.type,"name":_vm.name,"pattern":_vm.pattern,"readonly":_vm.readonly,"required":_vm.required,"maxlength":_vm.maxlength,"placeholder":_vm.placeholder,"disabled":_vm.disabled || _vm.readonly,"aria-label":_vm.label,"aria-describedby":_vm.id,"autocomplete":_vm.autocomplete},domProps:{"value":_vm.value},on:{"input":function($event){_vm.updated($event.target.value);}}})]),_vm._v(" "),_vm._t("default"),_vm._v(" "),_vm._t("help",[(_vm.helpText)?_c('help-text',{domProps:{"innerHTML":_vm._s(_vm.helpText)}}):_vm._e()]),_vm._v(" "),_vm._t("feedback",[(_vm.validFeedback)?_c('form-feedback',{attrs:{"valid":""},domProps:{"innerHTML":_vm._s(_vm.validFeedback)}}):_vm._e(),_vm._v(" "),(_vm.invalidFeedback)?_c('form-feedback',{attrs:{"invalid":""},domProps:{"innerHTML":_vm._s(_vm.invalidFeedback)}}):_vm._e()])],2)},staticRenderFns: [],
 
     name: 'input-field',
 
@@ -22766,7 +22828,7 @@ function unit(height) {
     return isFinite(height) ? height + 'px' : height;
 }
 
-var ActivityIndicator = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.center)?_c('div',{staticClass:"center-wrapper",class:{'position-relative': _vm.relative, 'position-fixed': _vm.fixed},style:({minHeight: _vm.computedMinHeight})},[_c('div',{staticClass:"center-content"},[_c(_vm.component,{tag:"component",attrs:{"size":_vm.size,"prefix":_vm.prefix}})],1)]):_c(_vm.component,{tag:"component",style:({minHeight: _vm.computedMinHeight}),attrs:{"size":_vm.size,"prefix":_vm.prefix}})},staticRenderFns: [],
+var ActivityIndicator = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.center)?_c('div',{staticClass:"center-wrapper",class:{'position-relative': _vm.relative, 'position-fixed': _vm.fixed},style:({minHeight: _vm.unit(this.minHeight), minWidth: _vm.unit(this.minWidth)})},[_c('div',{staticClass:"center-content"},[_c(_vm.component,{tag:"component",attrs:{"size":_vm.size,"prefix":_vm.prefix}})],1)]):_c(_vm.component,{tag:"component",style:({minHeight: _vm.unit(this.minHeight), minWidth: _vm.unit(this.minWidth)}),attrs:{"size":_vm.size,"prefix":_vm.prefix}})},staticRenderFns: [],
 
     name: 'activity-indicator',
 
@@ -22785,7 +22847,9 @@ var ActivityIndicator = {render: function(){var _vm=this;var _h=_vm.$createEleme
             default: 'dots'
         },
 
-        minHeight: [String, Number]
+        minHeight: [String, Number],
+
+        minWidth: [String, Number]
 
     },
 
@@ -22794,11 +22858,15 @@ var ActivityIndicator = {render: function(){var _vm=this;var _h=_vm.$createEleme
         ActivityIndicatorSpinner
     },
 
-    computed: {
+    methods: {
 
-        computedMinHeight() {
-            return unit(this.minHeight);
-        },
+        unit(value) {
+            return unit(value);
+        }
+
+    },
+
+    computed: {
 
         component() {
             return kebabCase(this.prefix + this.type.replace(this.prefix, ''));
@@ -23130,59 +23198,9 @@ var PlaceAutocompleteField = {
 
 };
 
-var PlaceAutocompleteListItem = {
-  render: function render() {
-    var _vm = this;
-
-    var _h = _vm.$createElement;
-
-    var _c = _vm._self._c || _h;
-
-    return _c('li', {
-      staticClass: "autocomplete-list-item",
-      on: {
-        "focus": _vm.onFocus,
-        "onBlur": _vm.onBlur
-      }
-    }, [_c('a', {
-      attrs: {
-        "href": "#"
-      },
-      on: {
-        "click": function click($event) {
-          $event.preventDefault();
-          return _vm.onClick($event);
-        },
-        "focus": _vm.onFocus,
-        "blur": _vm.onBlur
-      }
-    }, [_c('span', {
-      staticClass: "autocomplete-list-item-icon"
-    }), _vm._v(" "), _c('span', {
-      staticClass: "autocomplete-list-item-label"
-    }, [_vm._t("default")], 2)])]);
-  },
-  staticRenderFns: [],
-  name: 'place-autocomplete-list-item',
-  props: {
-    item: Object
-  },
-  methods: {
-    onBlur: function onBlur(event) {
-      this.$emit('blur', event, this);
-    },
-    onClick: function onClick(event) {
-      this.$emit('click', event, this);
-    },
-    onFocus: function onFocus(event) {
-      this.$emit('focus', event, this);
-    }
-  }
-};
-
 function install(Vue, options) {
   console.log(Vue);
-  Vue.use(MergeClasses);
+  Vue.use(MergeClasses$1);
   Vue.directive('place-autofill', PlaceAutofill);
   Vue.component('place-autocomplete-field', PlaceAutocompleteField);
   Vue.component('place-autocomplete-list', PlaceAutocompleteList);

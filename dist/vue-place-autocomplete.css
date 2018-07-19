@@ -17,6 +17,33 @@
   padding: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25); }
 
+.autocomplete-list-item {
+  margin: 0;
+  padding: 0;
+  font-size: .8rem;
+  list-style: none; }
+  .autocomplete-list-item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15); }
+  .autocomplete-list-item > a {
+    text-decoration: none;
+    padding: 5px;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; }
+    .autocomplete-list-item > a:hover {
+      text-decoration: none;
+      background: rgba(0, 0, 0, 0.05); }
+
+.autocomplete-list-item-icon {
+  width: 15px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: top;
+  background-size: 34px;
+  background-position: -1px -161px;
+  background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png); }
+
 .center-wrapper {
   position: absolute;
   top: 0;
@@ -621,31 +648,4 @@
 
 .btn-activity-indicator-spinner:not(.btn-warning) .activity-indicator-spinner > div:before {
   background-color: white; }
-
-.autocomplete-list-item {
-  margin: 0;
-  padding: 0;
-  font-size: .8rem;
-  list-style: none; }
-  .autocomplete-list-item:not(:last-child) {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15); }
-  .autocomplete-list-item > a {
-    text-decoration: none;
-    padding: 5px;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis; }
-    .autocomplete-list-item > a:hover {
-      text-decoration: none;
-      background: rgba(0, 0, 0, 0.05); }
-
-.autocomplete-list-item-icon {
-  width: 15px;
-  height: 20px;
-  display: inline-block;
-  vertical-align: top;
-  background-size: 34px;
-  background-position: -1px -161px;
-  background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png); }
 
