@@ -282,11 +282,7 @@ export default {
     },
 
     mounted() {
-        console.log('PlaceAutocompleteField mounted');
-
         script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
-            console.log(`script loaded: ${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`);
-
             this.$geocoder = new google.maps.Geocoder();
             this.$service = new google.maps.places.AutocompleteService();
             this.loaded = true;

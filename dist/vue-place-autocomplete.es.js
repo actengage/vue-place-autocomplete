@@ -21973,7 +21973,7 @@ var forEach_1 = forEach$1;
 
 var each = forEach_1;
 
-const loaded = {};
+const LOADED_SCRIPTS = {};
 
 function element(url) {
     const script = document.createElement('script');
@@ -21995,19 +21995,19 @@ function append(script) {
 }
 
 function script(url) {
-    if(loaded[url] instanceof Promise) {
-        return loaded[url];
+    if(LOADED_SCRIPTS[url] instanceof Promise) {
+        return LOADED_SCRIPTS[url];
     }
-    else if(loaded[url]) {
+    else if(LOADED_SCRIPTS[url] || document.querySelector(`script[src="${url}"]`)) {
         return new Promise((resolve, reject) => {
-            resolve(loaded[url]);
+            resolve(LOADED_SCRIPTS[url]);
         });
     }
 
-    return loaded[url] = new Promise((resolve, reject) => {
+    return LOADED_SCRIPTS[url] = new Promise((resolve, reject) => {
         try {
             append(element(url)).addEventListener('load', event => {
-                resolve(loaded[url] = event);
+                resolve(LOADED_SCRIPTS[url] = event);
             });
         }
         catch(e) {
@@ -23166,9 +23166,7 @@ var PlaceAutocompleteField = {
   mounted: function mounted() {
     var _this6 = this;
 
-    console.log('PlaceAutocompleteField mounted');
     script("".concat(this.baseUri, "?key=").concat(this.apiKey, "&libraries=").concat(this.libraries.join(','))).then(function () {
-      console.log("script loaded: ".concat(_this6.baseUri, "?key=").concat(_this6.apiKey, "&libraries=").concat(_this6.libraries.join(',')));
       _this6.$geocoder = new google.maps.Geocoder();
       _this6.$service = new google.maps.places.AutocompleteService();
       _this6.loaded = true;
