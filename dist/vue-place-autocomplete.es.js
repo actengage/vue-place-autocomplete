@@ -22932,6 +22932,7 @@ var PlaceAutocompleteField = {
         "aria-describedby": _vm.id,
         "label": _vm.label,
         "errors": _vm.errors,
+        "value": _vm.value,
         "autocomplete": "no"
       },
       on: {
@@ -23155,6 +23156,10 @@ var PlaceAutocompleteField = {
     },
     onFocus: function onFocus(event) {
       if (this.query) {
+        if (!this.predictions.length) {
+          this.onKeyup(event);
+        }
+
         this.show();
       }
     },
@@ -23184,7 +23189,7 @@ var PlaceAutocompleteField = {
   },
   data: function data() {
     return {
-      query: null,
+      query: this.value,
       focus: null,
       activity: false,
       loaded: false,

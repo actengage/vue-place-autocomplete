@@ -14,13 +14,13 @@
             :aria-describedby="id"
             :label="label"
             :errors="errors"
+            :value="value"
             autocomplete="no"
             @input="updated"
             @focus="onFocus"
             @blur="onBlur">
             <activity-indicator v-if="activity" size="xs" type="spinner"/>
         </input-field>
-
         <place-autocomplete-list v-if="predictions && showPredictions" :items="predictions" @item:click="onItemClick" @item:blur="onItemBlur"/>
     </div>
 </template>
@@ -260,6 +260,10 @@ export default {
 
         onFocus(event) {
             if(this.query) {
+                if(!this.predictions.length) {
+                    this.onKeyup(event);
+                }
+
                 this.show();
             }
         },
@@ -292,7 +296,7 @@ export default {
 
     data() {
         return {
-            query: null,
+            query: this.value,
             focus: null,
             activity: false,
             loaded: false,
