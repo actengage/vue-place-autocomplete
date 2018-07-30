@@ -21981,6 +21981,23 @@ var forEach_1 = forEach$1;
 
 var each = forEach_1;
 
+function geocode(options) {
+  var geocoder = new google.maps.Geocoder();
+  return new Promise(function (resolve, reject) {
+    if (!options.geometry) {
+      geocoder.geocode(options, function (results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          resolve(results);
+        } else {
+          reject(status);
+        }
+      });
+    } else {
+      resolve([options]);
+    }
+  });
+}
+
 const LOADED_SCRIPTS = {};
 
 function element(url) {
@@ -23028,52 +23045,32 @@ var PlaceAutocompleteField = {
 
       return omitBy_1(options, isEmpty_1);
     },
-    geocode: function geocode(request) {
+    select: function select(place) {
       var _this2 = this;
 
-      this.activity = true;
-      this.$emit('geocode', request);
-      return new Promise(function (resolve, reject) {
-        _this2.$geocoder.geocode(request, function (response, status) {
-          _this2.activity = false;
-
-          switch (status) {
-            case google.maps.places.PlacesServiceStatus.OK:
-              resolve(response);
-              break;
-
-            default:
-              reject(status);
-          }
-        });
-      });
-    },
-    select: function select(place) {
-      var _this3 = this;
-
-      this.geocode({
+      geocode({
         placeId: place.place_id
       }).then(function (response) {
-        _this3.hide();
+        _this2.hide();
 
-        _this3.updated(_this3.query = response[0].formatted_address);
+        _this2.updated(_this2.query = response[0].formatted_address);
 
-        _this3.$emit('select', place, response[0]);
+        _this2.$emit('select', place, response[0]);
       });
     },
     search: function search() {
-      var _this4 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        if (!_this4.getInputElement().value) {
-          _this4.predictions = false;
-          _this4.showPredictions = false;
+        if (!_this3.getInputElement().value) {
+          _this3.predictions = false;
+          _this3.showPredictions = false;
           reject();
         } else {
-          _this4.activity = true;
+          _this3.activity = true;
 
-          _this4.$service.getPlacePredictions(_this4.getRequestOptions(), function (response, status) {
-            _this4.activity = false;
+          _this3.$service.getPlacePredictions(_this3.getRequestOptions(), function (response, status) {
+            _this3.activity = false;
 
             switch (status) {
               case google.maps.places.PlacesServiceStatus.OK:
@@ -23120,7 +23117,7 @@ var PlaceAutocompleteField = {
       }
     },
     onKeyup: function onKeyup(event) {
-      var _this5 = this;
+      var _this4 = this;
 
       switch (event.keyCode) {
         case KEYCODE.ENTER:
@@ -23148,10 +23145,10 @@ var PlaceAutocompleteField = {
       }
 
       this.search().then(function (response) {
-        _this5.predictions = response;
-        _this5.showPredictions = true;
+        _this4.predictions = response;
+        _this4.showPredictions = true;
       }, function (error) {
-        _this5.predictions = false;
+        _this4.predictions = false;
       });
     },
     onFocus: function onFocus(event) {
@@ -23177,14 +23174,14 @@ var PlaceAutocompleteField = {
     }
   },
   mounted: function mounted() {
-    var _this6 = this;
+    var _this5 = this;
 
     script("".concat(this.baseUri, "?key=").concat(this.apiKey, "&libraries=").concat(this.libraries.join(','))).then(function () {
-      _this6.$geocoder = new google.maps.Geocoder();
-      _this6.$service = new google.maps.places.AutocompleteService();
-      _this6.loaded = true;
+      _this5.$geocoder = new google.maps.Geocoder();
+      _this5.$service = new google.maps.places.AutocompleteService();
+      _this5.loaded = true;
 
-      _this6.$emit('loaded');
+      _this5.$emit('loaded');
     });
   },
   data: function data() {

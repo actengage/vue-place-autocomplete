@@ -29,6 +29,7 @@
 import { each } from 'lodash';
 import { omitBy } from 'lodash';
 import { isEmpty } from 'lodash';
+import geocode from './Helpers/Geocode';
 import script from 'vue-interface/src/Helpers/Script';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
 import FormGroup from 'vue-interface/src/Components/FormGroup';
@@ -137,27 +138,8 @@ export default {
             return omitBy(options, isEmpty);
         },
 
-        geocode(request) {
-            this.activity = true;
-            this.$emit('geocode', request);
-
-            return new Promise((resolve, reject) => {
-                this.$geocoder.geocode(request, (response, status) => {
-                    this.activity = false;
-
-                    switch(status) {
-                        case google.maps.places.PlacesServiceStatus.OK:
-                            resolve(response);
-                            break;
-                        default:
-                            reject(status);
-                    }
-                });
-            });
-        },
-
         select(place) {
-            this.geocode({placeId: place.place_id}).then(response => {
+            geocode({placeId: place.place_id}).then(response => {
                 this.hide();
                 this.updated(this.query = response[0].formatted_address);
                 this.$emit('select', place, response[0]);
