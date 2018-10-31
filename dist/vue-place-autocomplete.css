@@ -44,6 +44,19 @@
   background-position: -1px -161px;
   background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png); }
 
+.input-field {
+  position: relative; }
+  .input-field .activity-indicator {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(-1rem, -50%);
+    transition: all .25s ease-in; }
+  .input-field .slide-fade-enter,
+  .input-field .slide-fade-leave-to {
+    opacity: 0;
+    transform: translate(25%, -50%); }
+
 .center-wrapper {
   position: absolute;
   top: 0;

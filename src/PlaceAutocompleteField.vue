@@ -16,7 +16,7 @@
             :errors="errors"
             :value="value"
             autocomplete="no"
-            @input="updated"
+            @input="$emit('input', query)"
             @focus="onFocus"
             @blur="onBlur">
             <activity-indicator v-if="activity" size="xs" type="spinner"/>
@@ -26,12 +26,10 @@
 </template>
 
 <script>
-import { each } from 'lodash';
-import { omitBy } from 'lodash';
-import { isEmpty } from 'lodash';
 import geocode from './Helpers/Geocode';
 import script from 'vue-interface/src/Helpers/Script';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
+import FormControl from 'vue-interface/src/Mixins/FormControl';
 import FormGroup from 'vue-interface/src/Components/FormGroup';
 import InputField from 'vue-interface/src/Components/InputField';
 import ActivityIndicator from 'vue-interface/src/Components/ActivityIndicator';
@@ -60,7 +58,9 @@ export default {
 
     name: 'place-autocomplete-field',
 
-    extends: InputField,
+    mixins: [
+        FormControl
+    ],
 
     components: {
         FormGroup,
@@ -131,17 +131,19 @@ export default {
                 input: this.getInputElement().value
             };
 
-            each(API_REQUEST_OPTIONS, key => {
-                options[key] = this[key];
-            });
+            for(let i in API_REQUEST_OPTIONS) {
+                if(this[i] !== undefined || this[i] !== null) {
+                    options[i] = this[i];
+                }
+            }
 
-            return omitBy(options, isEmpty);
+            return options;
         },
 
         select(place) {
             geocode({placeId: place.place_id}).then(response => {
                 this.hide();
-                this.updated(this.query = response[0].formatted_address);
+                this.$emit('input', this.query = response[0].formatted_address);
                 this.$emit('select', place, response[0]);
             });
         },
@@ -279,7 +281,6 @@ export default {
     data() {
         return {
             query: this.value,
-            focus: null,
             activity: false,
             loaded: false,
             predictions: false,

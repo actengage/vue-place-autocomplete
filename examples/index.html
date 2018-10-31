@@ -26,13 +26,15 @@
 
             <h3>Default Usage</h3>
             <p>The default usage extends the InputField from vue-interface, so all the properties are inherited.</p>
-            
+
             <place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"></place-autocomplete-field>
 
             <hr>
 
             <h3>Autofill fields</h3>
             <p>Sometimes you may need to autofill address components into other input fields...</p>
+
+            {{field2}}
 
             <place-autocomplete-field
                 v-model="field2"
