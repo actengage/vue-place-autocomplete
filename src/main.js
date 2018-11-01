@@ -8,7 +8,7 @@ export {
     PlaceAutocompleteField,
     PlaceAutocompleteList,
     PlaceAutocompleteListItem
-}
+};
 
 function install(Vue, options) {
     Vue.directive('place-autofill', PlaceAutofill);
@@ -17,7 +17,7 @@ function install(Vue, options) {
     Vue.component('place-autocomplete-list-item', PlaceAutocompleteListItem);
 }
 
-if(window && window.Vue) {
+if (window && window.Vue) {
     window.Vue.use(install);
 }
 

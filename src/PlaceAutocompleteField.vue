@@ -73,12 +73,12 @@ export default {
 
         'api-key': {
             type: String,
-            required: true,
+            required: true
         },
 
         'base-uri': {
             type: String,
-            default: 'https://maps.googleapis.com/maps/api/js',
+            default: 'https://maps.googleapis.com/maps/api/js'
         },
 
         'libraries': {
@@ -131,8 +131,8 @@ export default {
                 input: this.getInputElement().value
             };
 
-            for(let i in API_REQUEST_OPTIONS) {
-                if(this[i] !== undefined || this[i] !== null) {
+            for (let i in API_REQUEST_OPTIONS) {
+                if (this[i] !== undefined || this[i] !== null) {
                     options[i] = this[i];
                 }
             }
@@ -141,7 +141,7 @@ export default {
         },
 
         select(place) {
-            geocode({placeId: place.place_id}).then(response => {
+            geocode({ placeId: place.place_id }).then(response => {
                 this.hide();
                 this.$emit('input', this.query = response[0].formatted_address);
                 this.$emit('select', place, response[0]);
@@ -150,10 +150,10 @@ export default {
 
         search() {
             return new Promise((resolve, reject) => {
-                if(!this.getInputElement().value) {
+                if (!this.getInputElement().value) {
                     this.predictions = false;
                     this.showPredictions = false;
-                    reject();
+                    // reject(new Error('Input empty'));
                 }
                 else {
                     this.activity = true;
@@ -161,12 +161,12 @@ export default {
                     this.$service.getPlacePredictions(this.getRequestOptions(), (response, status) => {
                         this.activity = false;
 
-                        switch(status) {
-                            case google.maps.places.PlacesServiceStatus.OK:
-                                resolve(response);
-                                break;
-                            default:
-                                reject(status);
+                        switch (status) {
+                        case window.google.maps.places.PlacesServiceStatus.OK:
+                            resolve(response);
+                            break;
+                        default:
+                            reject(new Error(`Error with status: ${status}`));
                         }
                     });
                 }
@@ -184,7 +184,7 @@ export default {
         up() {
             const focused = this.$el.querySelector('a:focus');
 
-            if(focused && focused.parentElement.previousElementSibling) {
+            if (focused && focused.parentElement.previousElementSibling) {
                 focused.parentElement.previousElementSibling.querySelector('a').focus();
             }
             else {
@@ -196,7 +196,7 @@ export default {
         down() {
             const focused = this.$el.querySelector('a:focus');
 
-            if(focused && focused.parentElement.nextElementSibling) {
+            if (focused && focused.parentElement.nextElementSibling) {
                 focused.parentElement.nextElementSibling.querySelector('a').focus();
             }
             else {
@@ -207,44 +207,46 @@ export default {
         onKeydown(event) {
             const element = this.$el.querySelector('[tabindex]');
 
-            if(element && event.keyCode === KEYCODE.TAB) {
+            if (element && event.keyCode === KEYCODE.TAB) {
                 event.preventDefault() && element.focus();
             }
         },
 
         onKeyup(event) {
             switch (event.keyCode) {
-                case KEYCODE.ENTER:
-                case KEYCODE.SPACE:
-                    if(this.$el.querySelector('.is-focused')) {
-                        this.$el.querySelector('.is-focused a').dispatchEvent(new Event('mousedown'));
-                    }
-                    return;
-                case KEYCODE.ESC:
-                    this.hide();
-                    this.getInputElement().blur();
-                    return;
-                case KEYCODE.UP:
-                    this.up();
-                    event.preventDefault();
-                    return;
-                case KEYCODE.DOWN:
-                    this.down();
-                    event.preventDefault();
-                    return;
+            case KEYCODE.ENTER:
+            case KEYCODE.SPACE:
+                if (this.$el.querySelector('.is-focused')) {
+                    this.$el.querySelector('.is-focused a').dispatchEvent(new Event('mousedown'));
+                }
+                return;
+            case KEYCODE.ESC:
+                this.hide();
+                this.getInputElement().blur();
+                return;
+            case KEYCODE.UP:
+                this.up();
+                event.preventDefault();
+                return;
+            case KEYCODE.DOWN:
+                this.down();
+                event.preventDefault();
+                return;
             }
 
             this.search().then(response => {
                 this.predictions = response;
                 this.showPredictions = true;
             }, error => {
-                this.predictions = false;
+                if (error) {
+                    this.predictions = false;
+                }
             });
         },
 
         onFocus(event) {
-            if(this.query) {
-                if(!this.predictions.length) {
+            if (this.query) {
+                if (!this.predictions.length) {
                     this.onKeyup(event);
                 }
 
@@ -253,7 +255,7 @@ export default {
         },
 
         onBlur(event) {
-            if(!this.$el.contains(event.relatedTarget)) {
+            if (!this.$el.contains(event.relatedTarget)) {
                 this.hide();
             }
         },
@@ -271,8 +273,8 @@ export default {
 
     mounted() {
         script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
-            this.$geocoder = new google.maps.Geocoder();
-            this.$service = new google.maps.places.AutocompleteService();
+            this.$geocoder = new window.google.maps.Geocoder();
+            this.$service = new window.google.maps.places.AutocompleteService();
             this.loaded = true;
             this.$emit('loaded');
         });
@@ -316,7 +318,7 @@ export default {
         radius: undefined
     }
     */
-}
+};
 </script>
 
 <style lang="scss">
