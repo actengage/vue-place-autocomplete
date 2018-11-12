@@ -3,6 +3,7 @@
         <input-field
             v-model="query"
             v-bind-events
+            v-bind="$attrs"
             :label="label"
             :errors="errors"
             :value="value"
