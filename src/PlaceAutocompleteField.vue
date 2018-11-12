@@ -2,24 +2,16 @@
     <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup">
         <input-field
             v-model="query"
-            :name="name"
-            :id="id"
-            :type="type"
-            :placeholder="placeholder"
-            :required="required"
-            :disabled="disabled || readonly"
-            :readonly="readonly"
-            :pattern="pattern"
-            :aria-label="label"
-            :aria-describedby="id"
+            v-bind-events
+            v-bind="controlAttributes"
             :label="label"
             :errors="errors"
             :value="value"
             :custom="custom"
             autocomplete="no"
-            @input="$emit('input', query)"
+            @blur="onBlur"
             @focus="onFocus"
-            @blur="onBlur">
+            @input="$emit('input', query)">
             <activity-indicator v-if="activity" size="xs" type="spinner"/>
         </input-field>
         <place-autocomplete-list v-if="predictions && showPredictions" :items="predictions" @item:click="onItemClick" @item:blur="onItemBlur"/>

@@ -1,6 +1,6 @@
 {
     "name": "vue-place-autocomplete",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "main": "./dist/vue-place-autocomplete.js",
     "module": "./dist/vue-place-autocomplete.es.js",
     "devDependencies": {
@@ -50,15 +50,14 @@
         "rollup-plugin-serve": "^0.6.0",
         "rollup-plugin-uglify-es": "0.0.1",
         "rollup-plugin-vue": "github:objectivehtml/rollup-plugin-vue#patch-1",
+        "vue-interface": "^0.2.52",
         "vue-jest": "^3.0.0",
         "vue-jest-utils": "^0.2.0",
         "vue-server-renderer": "^2.5.17",
         "vue-template-compiler": "^2.5.17",
         "yargs": "^12.0.2"
     },
-    "dependencies": {
-        "vue-interface": "^0.2.3"
-    },
+    "dependencies": {},
     "peerDependencies": {
         "vue": "^2.5.17"
     },
