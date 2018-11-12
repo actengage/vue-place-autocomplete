@@ -1,7 +1,7 @@
 /**
  * vue-place-autocomplete
  *
- * 0.2.3
+ * 0.2.4
  * 2018-11-12
  */
 
@@ -1978,35 +1978,30 @@
         [
           _c(
             "input-field",
-            _vm._b(
-              {
-                directives: [{ name: "bind-events", rawName: "v-bind-events" }],
-                attrs: {
-                  label: _vm.label,
-                  errors: _vm.errors,
-                  value: _vm.value,
-                  custom: _vm.custom,
-                  autocomplete: "no"
-                },
-                on: {
-                  blur: _vm.onBlur,
-                  focus: _vm.onFocus,
-                  input: function($event) {
-                    _vm.$emit("input", _vm.query);
-                  }
-                },
-                model: {
-                  value: _vm.query,
-                  callback: function($$v) {
-                    _vm.query = $$v;
-                  },
-                  expression: "query"
+            {
+              directives: [{ name: "bind-events", rawName: "v-bind-events" }],
+              attrs: {
+                label: _vm.label,
+                errors: _vm.errors,
+                value: _vm.value,
+                custom: _vm.custom,
+                autocomplete: "no"
+              },
+              on: {
+                blur: _vm.onBlur,
+                focus: _vm.onFocus,
+                input: function($event) {
+                  _vm.$emit("input", _vm.query);
                 }
               },
-              "input-field",
-              _vm.controlAttributes,
-              false
-            ),
+              model: {
+                value: _vm.query,
+                callback: function($$v) {
+                  _vm.query = $$v;
+                },
+                expression: "query"
+              }
+            },
             [
               _vm.activity
                 ? _c("activity-indicator", {
