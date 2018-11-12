@@ -15,6 +15,7 @@
             :label="label"
             :errors="errors"
             :value="value"
+            :custom="custom"
             autocomplete="no"
             @input="$emit('input', query)"
             @focus="onFocus"
@@ -71,49 +72,51 @@ export default {
 
     props: {
 
-        'api-key': {
+        apiKey: {
             type: String,
             required: true
         },
 
-        'base-uri': {
+        baseUri: {
             type: String,
             default: 'https://maps.googleapis.com/maps/api/js'
         },
 
-        'libraries': {
+        componentRestrictions: {
+            type: [Boolean, Object, String],
+            default: false
+        },
+
+        custom: Boolean,
+
+        libraries: {
             type: Array,
             default() {
                 return ['geometry', 'places'];
             }
         },
 
-        'bounds': {
+        bounds: {
             type: [Boolean, Object, String],
             default: false
         },
 
-        'location': {
+        location: {
             type: [Boolean, Object, String],
             default: false
         },
 
-        'component-restrictions': {
-            type: [Boolean, Object, String],
-            default: false
-        },
-
-        'offset': {
+        offset: {
             type: Boolean,
             default: false
         },
 
-        'radius': {
+        radius: {
             type: Boolean,
             default: false
         },
 
-        'types': {
+        types: {
             type: [Boolean, Array],
             default: false
         }
