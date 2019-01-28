@@ -1,7 +1,7 @@
 /**
  * vue-place-autocomplete
  *
- * 0.2.7
+ * 0.2.8
  * 2019-01-28
  */
 
@@ -1935,7 +1935,7 @@
           loaded: false,
           predictions: false,
           showPredictions: false,
-          showActivityIndicator: false
+          showActivityIndicator: this.activity
         };
       }
       /*
@@ -2008,7 +2008,7 @@
               false
             ),
             [
-              _vm.activity
+              _vm.showActivityIndicator
                 ? _c("activity-indicator", {
                     attrs: { size: "xs", type: "spinner" }
                   })

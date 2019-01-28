@@ -12,7 +12,7 @@
             @blur="onBlur"
             @focus="onFocus"
             @input="$emit('input', query)">
-            <activity-indicator v-if="activity" size="xs" type="spinner"/>
+            <activity-indicator v-if="showActivityIndicator" size="xs" type="spinner"/>
         </input-field>
         <place-autocomplete-list v-if="predictions && showPredictions" :items="predictions" @item:click="onItemClick" @item:blur="onItemBlur"/>
     </div>
@@ -281,7 +281,7 @@ export default {
             loaded: false,
             predictions: false,
             showPredictions: false,
-            showActivityIndicator: false
+            showActivityIndicator: this.activity
         };
     }
 
