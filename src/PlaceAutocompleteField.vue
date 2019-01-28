@@ -151,10 +151,10 @@ export default {
                     // reject(new Error('Input empty'));
                 }
                 else {
-                    this.activity = true;
+                    this.showActivityIndicator = true;
 
                     this.$service.getPlacePredictions(this.getRequestOptions(), (response, status) => {
-                        this.activity = false;
+                        this.showActivityIndicator = false;
 
                         switch (status) {
                         case window.google.maps.places.PlacesServiceStatus.OK:
@@ -278,10 +278,10 @@ export default {
     data() {
         return {
             query: this.value,
-            activity: false,
             loaded: false,
             predictions: false,
-            showPredictions: false
+            showPredictions: false,
+            showActivityIndicator: false
         };
     }
 
