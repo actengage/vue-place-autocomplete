@@ -1,8 +1,8 @@
 /**
  * vue-place-autocomplete
  *
- * 0.2.5
- * 2018-11-12
+ * 0.2.7
+ * 2019-01-28
  */
 
 (function (global, factory) {
@@ -1810,10 +1810,10 @@
               _this2.predictions = false;
               _this2.showPredictions = false; // reject(new Error('Input empty'));
             } else {
-              _this2.activity = true;
+              _this2.showActivityIndicator = true;
 
               _this2.$service.getPlacePredictions(_this2.getRequestOptions(), function (response, status) {
-                _this2.activity = false;
+                _this2.showActivityIndicator = false;
 
                 switch (status) {
                   case window.google.maps.places.PlacesServiceStatus.OK:
@@ -1932,10 +1932,10 @@
       data: function data() {
         return {
           query: this.value,
-          activity: false,
           loaded: false,
           predictions: false,
-          showPredictions: false
+          showPredictions: false,
+          showActivityIndicator: false
         };
       }
       /*
