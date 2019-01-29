@@ -277,9 +277,9 @@ export default {
 
     data() {
         return {
-            query: this.value,
             loaded: false,
             predictions: false,
+            query: this.value,
             showPredictions: false,
             showActivityIndicator: this.activity
         };
