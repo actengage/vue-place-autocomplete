@@ -62,6 +62,12 @@ export default {
         PlaceAutocompleteList
     },
 
+    watch: {
+        value(value) {
+            this.query = value;
+        }
+    },
+
     props: {
 
         apiKey: {
