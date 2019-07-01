@@ -361,73 +361,291 @@ function concatMap(fn) {
     };
 }
 
-// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/debounce.js
+// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/now.js
 /**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing. The function also has a property 'clear' 
- * that is a function which will clear the timer to prevent previously scheduled executions. 
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
  *
- * @source underscore.js
- * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
- * @param {Function} function to wrap
- * @param {Number} timeout in ms (`100`)
- * @param {Boolean} whether to execute at the beginning (`false`)
- * @api public
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
  */
-function debounce(func, wait, immediate) {
-    let timeout, args, context, timestamp, result;
-    if(null == wait) wait = 100;
+var now = function () {
+    return Date.now();
+};
 
-    function later() {
-        let last = Date.now() - timestamp;
+/* harmony default export */ var Functions_now = (now);
+// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/isSymbol.js
+function isString(value) {
+    return typeof value === 'symbol';
+}
 
-        if(last < wait && last >= 0) {
-            timeout = setTimeout(later, wait - last);
+// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/toNumber.js
+
+
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+    if(typeof value == 'number') {
+        return value;
+    }
+    if(isString(value)) {
+        return NAN;
+    }
+    if(isObject(value)) {
+        var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+        value = isObject(other) ? (other + '') : other;
+    }
+    if(typeof value != 'string') {
+        return value === 0 ? value : +value;
+    }
+    value = value.replace(reTrim, '');
+    var isBinary = reIsBinary.test(value);
+    return (isBinary || reIsOctal.test(value))
+        ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+        : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+/* harmony default export */ var Functions_toNumber = (toNumber);
+// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/debounce.js
+
+
+
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the
+ * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent
+ * calls to the debounced function return the result of the last `func`
+ * invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+    var lastArgs,
+        lastThis,
+        maxWait,
+        result,
+        timerId,
+        lastCallTime,
+        lastInvokeTime = 0,
+        leading = false,
+        maxing = false,
+        trailing = true;
+
+    if(typeof func != 'function') {
+        throw new TypeError(FUNC_ERROR_TEXT);
+    }
+    wait = Functions_toNumber(wait) || 0;
+    if(isObject(options)) {
+        leading = !!options.leading;
+        maxing = 'maxWait' in options;
+        maxWait = maxing ? nativeMax(Functions_toNumber(options.maxWait) || 0, wait) : maxWait;
+        trailing = 'trailing' in options ? !!options.trailing : trailing;
+    }
+
+    function invokeFunc(time) {
+        var args = lastArgs,
+            thisArg = lastThis;
+
+        lastArgs = lastThis = undefined;
+        lastInvokeTime = time;
+        result = func.apply(thisArg, args);
+        return result;
+    }
+
+    function leadingEdge(time) {
+        // Reset any `maxWait` timer.
+        lastInvokeTime = time;
+        // Start the timer for the trailing edge.
+        timerId = setTimeout(timerExpired, wait);
+        // Invoke the leading edge.
+        return leading ? invokeFunc(time) : result;
+    }
+
+    function remainingWait(time) {
+        var timeSinceLastCall = time - lastCallTime,
+            timeSinceLastInvoke = time - lastInvokeTime,
+            timeWaiting = wait - timeSinceLastCall;
+
+        return maxing
+            ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+            : timeWaiting;
+    }
+
+    function shouldInvoke(time) {
+        var timeSinceLastCall = time - lastCallTime,
+            timeSinceLastInvoke = time - lastInvokeTime;
+
+        // Either this is the first call, activity has stopped and we're at the
+        // trailing edge, the system time has gone backwards and we're treating
+        // it as the trailing edge, or we've hit the `maxWait` limit.
+        return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+            (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+    }
+
+    function timerExpired() {
+        var time = Functions_now();
+        if(shouldInvoke(time)) {
+            return trailingEdge(time);
         }
-        else {
-            timeout = null;
-            if(!immediate) {
-                result = func.apply(context, args);
-                context = args = null;
+        // Restart the timer.
+        timerId = setTimeout(timerExpired, remainingWait(time));
+    }
+
+    function trailingEdge(time) {
+        timerId = undefined;
+
+        // Only invoke if we have `lastArgs` which means `func` has been
+        // debounced at least once.
+        if(trailing && lastArgs) {
+            return invokeFunc(time);
+        }
+        lastArgs = lastThis = undefined;
+        return result;
+    }
+
+    function cancel() {
+        if(timerId !== undefined) {
+            clearTimeout(timerId);
+        }
+        lastInvokeTime = 0;
+        lastArgs = lastCallTime = lastThis = timerId = undefined;
+    }
+
+    function flush() {
+        return timerId === undefined ? result : trailingEdge(Functions_now());
+    }
+
+    function debounced() {
+        var time = Functions_now(),
+            isInvoking = shouldInvoke(time);
+
+        lastArgs = arguments;
+        lastThis = this;
+        lastCallTime = time;
+
+        if(isInvoking) {
+            if(timerId === undefined) {
+                return leadingEdge(lastCallTime);
+            }
+            if(maxing) {
+                // Handle invocations in a tight loop.
+                timerId = setTimeout(timerExpired, wait);
+                return invokeFunc(lastCallTime);
             }
         }
-    };
-
-    let debounced = function() {
-        context = this;
-        args = arguments;
-        timestamp = Date.now();
-        let callNow = immediate && !timeout;
-        if(!timeout) timeout = setTimeout(later, wait);
-        if(callNow) {
-            result = func.apply(context, args);
-            context = args = null;
+        if(timerId === undefined) {
+            timerId = setTimeout(timerExpired, wait);
         }
-
         return result;
-    };
-
-    debounced.clear = function() {
-        if(timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-    };
-
-    debounced.flush = function() {
-        if(timeout) {
-            result = func.apply(context, args);
-            context = args = null;
-
-            clearTimeout(timeout);
-            timeout = null;
-        }
-    };
-
+    }
+    debounced.cancel = cancel;
+    debounced.flush = flush;
     return debounced;
-};
+}
+
+/* harmony default export */ var Functions_debounce = (debounce);
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/deepFlatten.js
 
 
@@ -493,7 +711,7 @@ function matches(properties) {
 }
 
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/isString.js
-function isString(value) {
+function isString_isString(value) {
     return typeof value === 'string';
 }
 
@@ -502,7 +720,7 @@ function isString(value) {
 
 
 function get(object, path) {
-    return (isString(path) ? path.split('.') : (!isArray(path) ? [path] : path)).reduce((a, b) => a[b], object);
+    return (isString_isString(path) ? path.split('.') : (!isArray(path) ? [path] : path)).reduce((a, b) => a[b], object);
 }
 
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/property.js
@@ -705,6 +923,76 @@ function remove(array, match) {
     });
 }
 
+// CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/throttle.js
+
+
+
+/** Error message constants. */
+var throttle_FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `wait` milliseconds. The throttled function comes with a `cancel`
+ * method to cancel delayed `func` invocations and a `flush` method to
+ * immediately invoke them. Provide `options` to indicate whether `func`
+ * should be invoked on the leading and/or trailing edge of the `wait`
+ * timeout. The `func` is invoked with the last arguments provided to the
+ * throttled function. Subsequent calls to the throttled function return the
+ * result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the throttled function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.throttle` and `_.debounce`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to throttle.
+ * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=true]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new throttled function.
+ * @example
+ *
+ * // Avoid excessively updating the position while scrolling.
+ * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+ *
+ * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
+ * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+ * jQuery(element).on('click', throttled);
+ *
+ * // Cancel the trailing throttled invocation.
+ * jQuery(window).on('popstate', throttled.cancel);
+ */
+function throttle(func, wait, options) {
+    var leading = true,
+        trailing = true;
+
+    if(typeof func != 'function') {
+        throw new TypeError(throttle_FUNC_ERROR_TEXT);
+    }
+    if(isObject(options)) {
+        leading = 'leading' in options ? !!options.leading : leading;
+        trailing = 'trailing' in options ? !!options.trailing : trailing;
+    }
+    return Functions_debounce(func, wait, {
+        'leading': leading,
+        'maxWait': wait,
+        'trailing': trailing
+    });
+}
+
+/* harmony default export */ var Functions_throttle = (throttle);
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Helpers/Functions/wrap.js
 
 
@@ -756,7 +1044,11 @@ function wrap(subject, fn) {
 
 
 
-// CONCATENATED MODULE: ./src/PlaceAutofill.js
+
+
+
+
+// CONCATENATED MODULE: ./src/Directives/PlaceAutofill.js
 
 const ALIASES = {
   'street': ['street_number', 'route', 'intersection'],
@@ -807,7 +1099,7 @@ function update(binding, vnode, value) {
 
 /* harmony default export */ var PlaceAutofill = ({
   bind(el, binding, vnode) {
-    vnode.componentInstance.$on('select', (place, geocoder) => {
+    vnode.componentInstance.$on('autocomplete-select', (place, geocoder) => {
       vnode.context.$nextTick(() => {
         update(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
       });
@@ -815,12 +1107,12 @@ function update(binding, vnode, value) {
   }
 
 });
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteField.vue?vue&type=template&id=afef7f98&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteField.vue?vue&type=template&id=9f9f99f6&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"autocomplete-field",on:{"keydown":_vm.onKeydown,"keyup":_vm.onKeyup}},[_c('input-field',_vm._b({directives:[{name:"bind-events",rawName:"v-bind-events"}],attrs:{"label":_vm.label,"errors":_vm.errors,"value":_vm.value,"custom":_vm.custom,"autocomplete":"no"},on:{"blur":_vm.onBlur,"focus":_vm.onFocus,"input":function($event){return _vm.$emit('input', _vm.query)}},model:{value:(_vm.query),callback:function ($$v) {_vm.query=$$v},expression:"query"}},'input-field',_vm.$attrs,false),[(_vm.showActivityIndicator)?_c('activity-indicator',{attrs:{"size":"xs","type":"spinner"}}):_vm._e()],1),(_vm.predictions && _vm.showPredictions)?_c('place-autocomplete-list',{attrs:{"items":_vm.predictions},on:{"item:click":_vm.onItemClick,"item:blur":_vm.onItemBlur}}):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/PlaceAutocompleteField.vue?vue&type=template&id=afef7f98&
+// CONCATENATED MODULE: ./src/PlaceAutocompleteField.vue?vue&type=template&id=9f9f99f6&
 
 // CONCATENATED MODULE: ./src/Helpers/Geocode.js
 function geocode(options) {
@@ -890,19 +1182,19 @@ function script(url) {
 
 /* harmony default export */ var Script = (script);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteList.vue?vue&type=template&id=2f123c5a&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteList.vue?vue&type=template&id=2f123c5a&
 var PlaceAutocompleteListvue_type_template_id_2f123c5a_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"autocomplete-list-wrapper"},[_c('ul',{staticClass:"autocomplete-list"},_vm._l((_vm.items),function(item,i){return _c('place-autocomplete-list-item',{key:item.id,attrs:{"item":item},on:{"click":_vm.onClick,"focus":_vm.onFocus,"blur":_vm.onBlur}},[_vm._v("\n            "+_vm._s(item[_vm.display])+"\n        ")])}),1)])}
 var PlaceAutocompleteListvue_type_template_id_2f123c5a_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./src/PlaceAutocompleteList.vue?vue&type=template&id=2f123c5a&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteListItem.vue?vue&type=template&id=8c0a1d24&
-var PlaceAutocompleteListItemvue_type_template_id_8c0a1d24_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('li',{staticClass:"autocomplete-list-item",on:{"focus":_vm.onFocus,"onBlur":_vm.onBlur}},[_c('a',{attrs:{"href":"#"},on:{"click":function($event){$event.preventDefault();return _vm.onClick($event)},"focus":_vm.onFocus,"blur":_vm.onBlur}},[_c('span',{staticClass:"autocomplete-list-item-icon"}),_c('span',{staticClass:"autocomplete-list-item-label"},[_vm._t("default")],2)])])}
-var PlaceAutocompleteListItemvue_type_template_id_8c0a1d24_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteListItem.vue?vue&type=template&id=3f46cee4&
+var PlaceAutocompleteListItemvue_type_template_id_3f46cee4_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('li',{staticClass:"autocomplete-list-item",on:{"focus":_vm.onFocus,"onBlur":_vm.onBlur}},[_c('a',{attrs:{"href":"#","tabindex":"0"},on:{"click":function($event){$event.preventDefault();return _vm.onClick($event)},"focus":_vm.onFocus,"blur":_vm.onBlur}},[_c('span',{staticClass:"autocomplete-list-item-icon"}),_c('span',{staticClass:"autocomplete-list-item-label"},[_vm._t("default")],2)])])}
+var PlaceAutocompleteListItemvue_type_template_id_3f46cee4_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/PlaceAutocompleteListItem.vue?vue&type=template&id=8c0a1d24&
+// CONCATENATED MODULE: ./src/PlaceAutocompleteListItem.vue?vue&type=template&id=3f46cee4&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteListItem.vue?vue&type=script&lang=js&
 //
@@ -1045,8 +1337,8 @@ function normalizeComponent (
 
 var component = normalizeComponent(
   src_PlaceAutocompleteListItemvue_type_script_lang_js_,
-  PlaceAutocompleteListItemvue_type_template_id_8c0a1d24_render,
-  PlaceAutocompleteListItemvue_type_template_id_8c0a1d24_staticRenderFns,
+  PlaceAutocompleteListItemvue_type_template_id_3f46cee4_render,
+  PlaceAutocompleteListItemvue_type_template_id_3f46cee4_staticRenderFns,
   false,
   null,
   null,
@@ -1566,7 +1858,7 @@ function addEmptyClass(el, vnode) {
 
 /* harmony default export */ var Mixins_FormControl = (FormControl);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormGroup/FormGroup.vue?vue&type=template&id=7253de15&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormGroup/FormGroup.vue?vue&type=template&id=7253de15&
 var FormGroupvue_type_template_id_7253de15_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:{'form-group': !!_vm.group}},[_vm._t("default")],2)}
 var FormGroupvue_type_template_id_7253de15_staticRenderFns = []
 
@@ -1626,14 +1918,14 @@ var FormGroup_component = normalizeComponent(
 
 /* harmony default export */ var Components_FormGroup = (FormGroup);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/InputField/InputField.vue?vue&type=template&id=3b05516f&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/InputField/InputField.vue?vue&type=template&id=3b05516f&
 var InputFieldvue_type_template_id_3b05516f_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form-group',{class:_vm.formGroupClasses,attrs:{"group":_vm.group}},[_vm._t("label",[(_vm.label)?_c('form-label',{ref:"label",attrs:{"for":_vm.$attrs.id},domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()]),_c('div',{staticClass:"form-group-inner"},[_vm._t("control",[_c('input',_vm._b({directives:[{name:"bind-events",rawName:"v-bind-events"}],domProps:{"value":_vm.value},on:{"input":function($event){return _vm.$emit('input', $event.target.value)}}},'input',_vm.controlAttributes,false))]),_vm._t("activity",[_c('transition',{attrs:{"name":"slide-fade"}},[(_vm.activity)?_c('activity-indicator',{key:"test",ref:"activity",attrs:{"type":"dots","size":_vm.size}}):_vm._e()],1)])],2),_vm._t("feedback",[(_vm.validFeedback)?_c('form-feedback',{ref:"feedback",attrs:{"valid":""},domProps:{"innerHTML":_vm._s(_vm.validFeedback)}}):(_vm.invalidFeedback)?_c('form-feedback',{ref:"feedback",attrs:{"invalid":""},domProps:{"innerHTML":_vm._s(_vm.invalidFeedback)}}):_vm._e()]),_vm._t("help",[(_vm.helpText)?_c('help-text',{ref:"help",domProps:{"innerHTML":_vm._s(_vm.helpText)}}):_vm._e()])],2)}
 var InputFieldvue_type_template_id_3b05516f_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Components/InputField/InputField.vue?vue&type=template&id=3b05516f&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/HelpText/HelpText.vue?vue&type=template&id=a1476532&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/HelpText/HelpText.vue?vue&type=template&id=a1476532&
 var HelpTextvue_type_template_id_a1476532_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('small',{staticClass:"form-text",class:_vm.classes},[_vm._t("default")],2)}
 var HelpTextvue_type_template_id_a1476532_staticRenderFns = []
 
@@ -1727,7 +2019,7 @@ var HelpText_component = normalizeComponent(
 
 /* harmony default export */ var Components_HelpText = (HelpText);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormLabel/FormLabel.vue?vue&type=template&id=eee24d34&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormLabel/FormLabel.vue?vue&type=template&id=eee24d34&
 var FormLabelvue_type_template_id_eee24d34_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('label',{class:_vm.classes},[_vm._t("default")],2)}
 var FormLabelvue_type_template_id_eee24d34_staticRenderFns = []
 
@@ -1789,7 +2081,7 @@ var FormLabel_component = normalizeComponent(
 
 /* harmony default export */ var Components_FormLabel = (FormLabel);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormFeedback/FormFeedback.vue?vue&type=template&id=77352d9c&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/FormFeedback/FormFeedback.vue?vue&type=template&id=77352d9c&
 var FormFeedbackvue_type_template_id_77352d9c_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:{'invalid-feedback': _vm.invalid, 'valid-feedback': _vm.valid && !_vm.invalid}},[_vm._t("default",[_vm._v(_vm._s(_vm.label))])],2)}
 var FormFeedbackvue_type_template_id_77352d9c_staticRenderFns = []
 
@@ -1867,14 +2159,14 @@ var FormFeedback_component = normalizeComponent(
 
 /* harmony default export */ var Components_FormFeedback = (FormFeedback);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/ActivityIndicator/ActivityIndicator.vue?vue&type=template&id=9bdfd590&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/ActivityIndicator/ActivityIndicator.vue?vue&type=template&id=9bdfd590&
 var ActivityIndicatorvue_type_template_id_9bdfd590_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.center)?_c('div',{staticClass:"center-wrapper",class:{'position-relative': _vm.relative, 'position-fixed': _vm.fixed},style:(_vm.style)},[_c('div',{staticClass:"center-content d-flex flex-column align-items-center"},[_c(_vm.component,{tag:"component",attrs:{"size":_vm.size,"prefix":_vm.prefix}}),(_vm.label)?_c('div',{staticClass:"activity-indicator-label",domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()],1)]):_c('div',{staticClass:"d-flex flex-column justify-content-center align-items-center",style:(_vm.style)},[_c(_vm.component,{tag:"component",attrs:{"size":_vm.size,"prefix":_vm.prefix}}),(_vm.label)?_c('div',{staticClass:"activity-indicator-label",domProps:{"innerHTML":_vm._s(_vm.label)}}):_vm._e()],1)}
 var ActivityIndicatorvue_type_template_id_9bdfd590_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./node_modules/vue-interface/src/Components/ActivityIndicator/ActivityIndicator.vue?vue&type=template&id=9bdfd590&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/ActivityIndicator/Types/BaseType.vue?vue&type=template&id=004e82ac&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"14d3b436-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-interface/src/Components/ActivityIndicator/Types/BaseType.vue?vue&type=template&id=004e82ac&
 var BaseTypevue_type_template_id_004e82ac_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"activity-indicator",class:_vm.classes},_vm._l((_vm.nodes),function(i){return _c('div',{key:i})}),0)}
 var BaseTypevue_type_template_id_004e82ac_staticRenderFns = []
 
@@ -2354,9 +2646,9 @@ const API_REQUEST_OPTIONS = ['bounds', 'location', 'component-restrictions', 'of
       geocode({
         placeId: place.place_id
       }).then(response => {
-        this.hide();
+        //this.hide();
         this.$emit('input', this.query = response[0].formatted_address);
-        this.$emit('select', place, response[0]);
+        this.$emit('autocomplete-select', place, response[0]);
       });
     },
 
@@ -2551,25 +2843,18 @@ var PlaceAutocompleteField_component = normalizeComponent(
 )
 
 /* harmony default export */ var PlaceAutocompleteField = (PlaceAutocompleteField_component.exports);
-// CONCATENATED MODULE: ./src/main.js
+// CONCATENATED MODULE: ./src/index.js
 
 
 
 
 
-
-function install(Vue, options) {
+/* harmony default export */ var src = (function (Vue) {
   Vue.directive('place-autofill', PlaceAutofill);
   Vue.component('place-autocomplete-field', PlaceAutocompleteField);
   Vue.component('place-autocomplete-list', PlaceAutocompleteList);
   Vue.component('place-autocomplete-list-item', PlaceAutocompleteListItem);
-}
-
-if (window && window.Vue) {
-  window.Vue.use(install);
-}
-
-/* harmony default export */ var main = (install);
+});
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 /* concated harmony reexport PlaceAutofill */__webpack_require__.d(__webpack_exports__, "PlaceAutofill", function() { return PlaceAutofill; });
 /* concated harmony reexport PlaceAutocompleteField */__webpack_require__.d(__webpack_exports__, "PlaceAutocompleteField", function() { return PlaceAutocompleteField; });
@@ -2577,7 +2862,7 @@ if (window && window.Vue) {
 /* concated harmony reexport PlaceAutocompleteListItem */__webpack_require__.d(__webpack_exports__, "PlaceAutocompleteListItem", function() { return PlaceAutocompleteListItem; });
 
 
-/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (main);
+/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (src);
 
 
 
