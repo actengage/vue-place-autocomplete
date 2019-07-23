@@ -51,11 +51,11 @@ Sometimes you may need to autofill address components into other input fields...
         name="field2"
         api-key="AIzaSyAhSv9zWvisiTXRPRw6K8AE0DCmrRMpQcU"
         placeholder="Enter an an address, zipcode, or location"
-        v-place-autofill.street="street"
-        v-place-autofill.city="city"
-        v-place-autofill.state="state"
-        v-place-autofill.zipcode="zip"
-        v-place-autofill.country="country">
+        v-place-autofill:street="street"
+        v-place-autofill:city="city"
+        v-place-autofill:state="state"
+        v-place-autofill:zipcode="zip"
+        v-place-autofill:country="country">
     </place-autocomplete-field>
 
     <div class="card w-30">
