@@ -132,11 +132,11 @@ export default {
                 input: this.getInputElement().value
             };
 
-            for (let i in API_REQUEST_OPTIONS) {
-                if (this[i] !== undefined || this[i] !== null) {
-                    options[i] = this[i];
+            API_REQUEST_OPTIONS.forEach(prop => {
+                if (this[prop] !== undefined || this[prop] !== null) {
+                    options[prop] = this[prop];
                 }
-            }
+            });
 
             return options;
         },
