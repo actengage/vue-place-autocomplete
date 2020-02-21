@@ -70,10 +70,7 @@ export default {
 
     props: {
 
-        apiKey: {
-            type: String,
-            required: true
-        },
+        apiKey: String,
 
         baseUri: {
             type: String,
@@ -273,12 +270,14 @@ export default {
     },
 
     mounted() {
-        script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
-            this.$geocoder = new window.google.maps.Geocoder();
-            this.$service = new window.google.maps.places.AutocompleteService();
-            this.loaded = true;
-            this.$emit('loaded');
-        });
+        if(this.apiKey) {
+            script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+                this.$geocoder = new window.google.maps.Geocoder();
+                this.$service = new window.google.maps.places.AutocompleteService();
+                this.loaded = true;
+                this.$emit('loaded');
+            });
+        }
     },
 
     data() {
