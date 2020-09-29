@@ -18,23 +18,24 @@ function intersection(a, b) {
 }
 
 function extract(type, modifiers, geocoder) {
-    if (geocoder[type]) {
+    if(geocoder[type]) {
         return geocoder[type];
     }
-    else if (type === 'latitude') {
+    else if(type === 'latitude') {
         return geocoder.geometry.location.lat();
     }
-    else if (type === 'longitude') {
+    else if(type === 'longitude') {
         return geocoder.geometry.location.lng();
     }
 
     const aliases = ALIASES[type] || (isArray(type) ? type : [type]);
 
-    const values = geocoder.address_components.map(component => {
-        if (intersection(component.types, aliases).length) {
-            return component[modifiers.short ? 'short_name' : 'long_name'];
-        }
-    })
+    const values = geocoder.address_components
+        .map(component => {
+            if(intersection(component.types, aliases).length) {
+                return component[modifiers.short ? 'short_name' : 'long_name'];
+            }
+        })
         .filter(value => !!value);
 
     return values.length ? values.join(' ') : null;
@@ -47,7 +48,7 @@ function update(binding, vnode, value) {
 
     value = isArray(value) ? value.join(' ') : value;
 
-    if (binding.modifiers.query) {
+    if(binding.modifiers.query) {
         vnode.componentInstance.query = value;
     }
 
@@ -59,7 +60,7 @@ function update(binding, vnode, value) {
 export default {
 
     bind(el, binding, vnode) {
-        vnode.componentInstance.$on('select', (place, geocoder) => {
+        vnode.componentInstance.$on('autocomplete-select', (place, geocoder) => {
             vnode.context.$nextTick(() => {
                 update(binding, vnode, extract(binding.arg, binding.modifiers, geocoder));
             });

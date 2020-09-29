@@ -41,7 +41,7 @@ const KEYCODE = {
 const API_REQUEST_OPTIONS = [
     'bounds',
     'location',
-    'component-restrictions',
+    'componentRestrictions',
     'offset',
     'radius',
     'types'
@@ -70,10 +70,7 @@ export default {
 
     props: {
 
-        apiKey: {
-            type: String,
-            required: true
-        },
+        apiKey: String,
 
         baseUri: {
             type: String,
@@ -132,20 +129,20 @@ export default {
                 input: this.getInputElement().value
             };
 
-            API_REQUEST_OPTIONS.forEach(prop => {
-                if (this[prop] !== undefined || this[prop] !== null) {
-                    options[prop] = this[prop];
+            for (let i of API_REQUEST_OPTIONS) {
+                if (this[i] !== undefined || this[i] !== null) {
+                    options[i] = this[i];
                 }
-            });
+            }
 
             return options;
         },
 
         select(place) {
             geocode({ placeId: place.place_id }).then(response => {
-                this.hide();
+                //this.hide();
                 this.$emit('input', this.query = response[0].formatted_address);
-                this.$emit('select', place, response[0]);
+                this.$emit('autocomplete-select', place, response[0]);
             });
         },
 
@@ -273,12 +270,14 @@ export default {
     },
 
     mounted() {
-        script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
-            this.$geocoder = new window.google.maps.Geocoder();
-            this.$service = new window.google.maps.places.AutocompleteService();
-            this.loaded = true;
-            this.$emit('loaded');
-        });
+        if(this.apiKey) {
+            script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+                this.$geocoder = new window.google.maps.Geocoder();
+                this.$service = new window.google.maps.places.AutocompleteService();
+                this.loaded = true;
+                this.$emit('loaded');
+            });
+        }
     },
 
     data() {
