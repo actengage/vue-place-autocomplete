@@ -16,6 +16,7 @@
     "release": "npm publish; git add . -A; git commit; git push --tags"
   },
   "dependencies": {
+    "debounce": "^1.2.0",
     "vue": "^2.6.11",
     "vue-interface": "^0.4.52"
   },
