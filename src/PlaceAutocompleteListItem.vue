@@ -1,6 +1,6 @@
 <template>
     <li class="autocomplete-list-item" @focus="onFocus" @onBlur="onBlur">
-        <a href="#" @click.prevent="onClick" @focus="onFocus" @blur="onBlur">
+        <a href="#" @click.prevent="onClick" @focus="onFocus" @blur="onBlur" tabindex="0">
             <span class="autocomplete-list-item-icon"></span>
             <span class="autocomplete-list-item-label"><slot/></span>
         </a>

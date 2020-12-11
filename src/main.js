@@ -1,24 +1,10 @@
-import PlaceAutofill from './PlaceAutofill';
-import PlaceAutocompleteField from './PlaceAutocompleteField';
-import PlaceAutocompleteList from './PlaceAutocompleteList';
-import PlaceAutocompleteListItem from './PlaceAutocompleteListItem';
+import Vue from 'vue';
+import install from '.';
+import App from './App.vue';
 
-export {
-    PlaceAutofill,
-    PlaceAutocompleteField,
-    PlaceAutocompleteList,
-    PlaceAutocompleteListItem
-};
+Vue.use(install);
+Vue.config.productionTip = false;
 
-function install(Vue, options) {
-    Vue.directive('place-autofill', PlaceAutofill);
-    Vue.component('place-autocomplete-field', PlaceAutocompleteField);
-    Vue.component('place-autocomplete-list', PlaceAutocompleteList);
-    Vue.component('place-autocomplete-list-item', PlaceAutocompleteListItem);
-}
-
-if (window && window.Vue) {
-    window.Vue.use(install);
-}
-
-export default install;
+new Vue({
+    render: h => h(App)
+}).$mount('#app');

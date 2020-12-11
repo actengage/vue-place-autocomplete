@@ -41,7 +41,7 @@ const KEYCODE = {
 const API_REQUEST_OPTIONS = [
     'bounds',
     'location',
-    'componentRestrictions',
+    'component-restrictions',
     'offset',
     'radius',
     'types'
@@ -70,19 +70,11 @@ export default {
 
     props: {
 
-        apiKey: {
-            type: String,
-            required: true
-        },
+        apiKey: String,
 
         baseUri: {
             type: String,
             default: 'https://maps.googleapis.com/maps/api/js'
-        },
-
-        language: {
-            type: String,
-            default: 'en'
         },
 
         componentRestrictions: {
@@ -137,9 +129,9 @@ export default {
                 input: this.getInputElement().value
             };
 
-            API_REQUEST_OPTIONS.forEach(i => {
-                if (this[i] !== undefined || this[i] !== null) {
-                    options[i] = this[i];
+            API_REQUEST_OPTIONS.forEach(prop => {
+                if (this[prop] !== undefined || this[prop] !== null) {
+                    options[prop] = this[prop];
                 }
             });
 
@@ -148,9 +140,9 @@ export default {
 
         select(place) {
             geocode({ placeId: place.place_id }).then(response => {
-                this.hide();
+                //this.hide();
                 this.$emit('input', this.query = response[0].formatted_address);
-                this.$emit('select', place, response[0]);
+                this.$emit('autocomplete-select', place, response[0]);
             });
         },
 
@@ -278,12 +270,14 @@ export default {
     },
 
     mounted() {
-        script(`${this.baseUri}?key=${this.apiKey}&language=${this.language}&libraries=${this.libraries.join(',')}`).then(() => {
-            this.$geocoder = new window.google.maps.Geocoder();
-            this.$service = new window.google.maps.places.AutocompleteService();
-            this.loaded = true;
-            this.$emit('loaded');
-        });
+        if(this.apiKey) {
+            script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+                this.$geocoder = new window.google.maps.Geocoder();
+                this.$service = new window.google.maps.places.AutocompleteService();
+                this.loaded = true;
+                this.$emit('loaded');
+            });
+        }
     },
 
     data() {
