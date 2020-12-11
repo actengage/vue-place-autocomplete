@@ -41,7 +41,7 @@ const KEYCODE = {
 const API_REQUEST_OPTIONS = [
     'bounds',
     'location',
-    'component-restrictions',
+    'componentRestrictions',
     'offset',
     'radius',
     'types'
@@ -78,6 +78,11 @@ export default {
         baseUri: {
             type: String,
             default: 'https://maps.googleapis.com/maps/api/js'
+        },
+
+        language: {
+            type: String,
+            default: 'en'
         },
 
         componentRestrictions: {
@@ -132,9 +137,9 @@ export default {
                 input: this.getInputElement().value
             };
 
-            API_REQUEST_OPTIONS.forEach(prop => {
-                if (this[prop] !== undefined || this[prop] !== null) {
-                    options[prop] = this[prop];
+            API_REQUEST_OPTIONS.forEach(i => {
+                if (this[i] !== undefined || this[i] !== null) {
+                    options[i] = this[i];
                 }
             });
 
@@ -273,7 +278,7 @@ export default {
     },
 
     mounted() {
-        script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+        script(`${this.baseUri}?key=${this.apiKey}&language=${this.language}&libraries=${this.libraries.join(',')}`).then(() => {
             this.$geocoder = new window.google.maps.Geocoder();
             this.$service = new window.google.maps.places.AutocompleteService();
             this.loaded = true;

@@ -815,12 +815,12 @@ function update(binding, vnode, value) {
   }
 
 });
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteField.vue?vue&type=template&id=afef7f98&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3128214e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/PlaceAutocompleteField.vue?vue&type=template&id=3f79ad3c&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"autocomplete-field",on:{"keydown":_vm.onKeydown,"keyup":_vm.onKeyup}},[_c('input-field',_vm._b({directives:[{name:"bind-events",rawName:"v-bind-events"}],attrs:{"label":_vm.label,"errors":_vm.errors,"value":_vm.value,"custom":_vm.custom,"autocomplete":"no"},on:{"blur":_vm.onBlur,"focus":_vm.onFocus,"input":function($event){return _vm.$emit('input', _vm.query)}},model:{value:(_vm.query),callback:function ($$v) {_vm.query=$$v},expression:"query"}},'input-field',_vm.$attrs,false),[(_vm.showActivityIndicator)?_c('activity-indicator',{attrs:{"size":"xs","type":"spinner"}}):_vm._e()],1),(_vm.predictions && _vm.showPredictions)?_c('place-autocomplete-list',{attrs:{"items":_vm.predictions},on:{"item:click":_vm.onItemClick,"item:blur":_vm.onItemBlur}}):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/PlaceAutocompleteField.vue?vue&type=template&id=afef7f98&
+// CONCATENATED MODULE: ./src/PlaceAutocompleteField.vue?vue&type=template&id=3f79ad3c&
 
 // CONCATENATED MODULE: ./src/Helpers/Geocode.js
 function geocode(options) {
@@ -2272,7 +2272,7 @@ const KEYCODE = {
   SPACE: 32,
   TAB: 9
 };
-const API_REQUEST_OPTIONS = ['bounds', 'location', 'component-restrictions', 'offset', 'radius', 'types'];
+const API_REQUEST_OPTIONS = ['bounds', 'location', 'componentRestrictions', 'offset', 'radius', 'types'];
 /* harmony default export */ var PlaceAutocompleteFieldvue_type_script_lang_js_ = ({
   name: 'place-autocomplete-field',
   mixins: [Mixins_FormControl],
@@ -2296,6 +2296,10 @@ const API_REQUEST_OPTIONS = ['bounds', 'location', 'component-restrictions', 'of
     baseUri: {
       type: String,
       default: 'https://maps.googleapis.com/maps/api/js'
+    },
+    language: {
+      type: String,
+      default: 'en'
     },
     componentRestrictions: {
       type: [Boolean, Object, String],
@@ -2340,13 +2344,11 @@ const API_REQUEST_OPTIONS = ['bounds', 'location', 'component-restrictions', 'of
       const options = {
         input: this.getInputElement().value
       };
-
-      for (let i in API_REQUEST_OPTIONS) {
+      API_REQUEST_OPTIONS.forEach(i => {
         if (this[i] !== undefined || this[i] !== null) {
           options[i] = this[i];
         }
-      }
-
+      });
       return options;
     },
 
@@ -2484,7 +2486,7 @@ const API_REQUEST_OPTIONS = ['bounds', 'location', 'component-restrictions', 'of
   },
 
   mounted() {
-    Script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+    Script(`${this.baseUri}?key=${this.apiKey}&language=${this.language}&libraries=${this.libraries.join(',')}`).then(() => {
       this.$geocoder = new window.google.maps.Geocoder();
       this.$service = new window.google.maps.places.AutocompleteService();
       this.loaded = true;
