@@ -8,7 +8,7 @@
             :errors="errors"
             :value="value"
             :custom="custom"
-            autocomplete="no"
+            autocomplete="off"
             @blur="onBlur"
             @focus="onFocus"
             @input="$emit('input', query)">
