@@ -1,4 +1,4 @@
-import { isArray } from 'vue-interface/src/Helpers/Functions';
+import { isArray } from '@dev.envivo/vue-interface/src/Helpers/Functions';
 
 const ALIASES = {
     'street': ['street_number', 'route', 'intersection'],

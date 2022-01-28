@@ -1,6 +1,6 @@
 {
   "name": "@dev.envivo/vue-place-autocomplete",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "module": "./src/index.js",
   "main": "./dist/VuePlaceAutocomplete.umd.min.js",
   "repository": "https://github.com/actengage/vue-place-autocomplete",
