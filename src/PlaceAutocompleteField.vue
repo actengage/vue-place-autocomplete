@@ -19,12 +19,12 @@
 
 <script>
 import geocode from './Helpers/Geocode';
-import script from 'vue-interface/src/Helpers/Script';
+import script from '@dev.envivo/vue-interface/src/Helpers/Script';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
-import FormControl from 'vue-interface/src/Mixins/FormControl';
-import FormGroup from 'vue-interface/src/Components/FormGroup';
-import InputField from 'vue-interface/src/Components/InputField';
-import ActivityIndicator from 'vue-interface/src/Components/ActivityIndicator';
+import FormControl from '@dev.envivo/vue-interface/src/Mixins/FormControl';
+import FormGroup from '@dev.envivo/vue-interface/src/Components/FormGroup';
+import InputField from '@dev.envivo/vue-interface/src/Components/InputField';
+import ActivityIndicator from '@dev.envivo/vue-interface/src/Components/ActivityIndicator';
 
 const KEYCODE = {
     ESC: 27,
