@@ -1,6 +1,6 @@
 <template>
     <div class="autocomplete-list-wrapper">
-        <ul class="autocomplete-list">
+        <ul class="autocomplete-list" role="listbox" id="vue-place-autocomplete-listbox">
             <place-autocomplete-list-item v-for="(item, i) in items" :key="item.id" :item="item" @click="onClick" @focus="onFocus" @blur="onBlur">
                 {{ item[display] }}
             </place-autocomplete-list-item>
