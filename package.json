@@ -1,6 +1,6 @@
 {
-  "name": "vue-place-autocomplete",
-  "version": "0.6.0",
+  "name": "@dev.envivo/vue-place-autocomplete",
+  "version": "0.1.0",
   "module": "./src/index.js",
   "main": "./dist/VuePlaceAutocomplete.umd.min.js",
   "repository": "https://github.com/actengage/vue-place-autocomplete",
@@ -15,8 +15,8 @@
     "release": "npm publish; git add . -A; git commit; git push --tags"
   },
   "dependencies": {
-    "vue": "^2.6.14",
-    "vue-interface": "git+https://github.com/envivolink/vue-interface.git"
+    "@dev.envivo/vue-interface": "^0.1.0",
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.2",
@@ -35,5 +35,8 @@
     "node-sass": "^6.0.1",
     "sass-loader": "^10.2.0",
     "vue-template-compiler": "^2.6.14"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
