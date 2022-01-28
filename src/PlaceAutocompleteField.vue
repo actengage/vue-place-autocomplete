@@ -1,5 +1,5 @@
 <template>
-    <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup">
+    <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup" role="combobox" aria-haspopup="listbox">
         <input-field
             v-model="query"
             v-bind-events
@@ -8,7 +8,6 @@
             :errors="errors"
             :value="value"
             :custom="custom"
-            autocomplete="no"
             @blur="onBlur"
             @focus="onFocus"
             @input="$emit('input', query)">
