@@ -1,5 +1,5 @@
 <template>
-    <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup">
+    <div class="autocomplete-field" @keydown="onKeydown" @keyup="onKeyup" role="combobox" aria-haspopup="listbox">
         <input-field
             v-model="query"
             v-bind-events
@@ -8,7 +8,6 @@
             :errors="errors"
             :value="value"
             :custom="custom"
-            autocomplete="no"
             @blur="onBlur"
             @focus="onFocus"
             @input="$emit('input', query)">
@@ -20,12 +19,12 @@
 
 <script>
 import geocode from './Helpers/Geocode';
-import script from 'vue-interface/src/Helpers/Script';
+import script from '@dev.envivo/vue-interface/src/Helpers/Script';
 import PlaceAutocompleteList from './PlaceAutocompleteList';
-import FormControl from 'vue-interface/src/Mixins/FormControl';
-import FormGroup from 'vue-interface/src/Components/FormGroup';
-import InputField from 'vue-interface/src/Components/InputField';
-import ActivityIndicator from 'vue-interface/src/Components/ActivityIndicator';
+import FormControl from '@dev.envivo/vue-interface/src/Mixins/FormControl';
+import FormGroup from '@dev.envivo/vue-interface/src/Components/FormGroup';
+import InputField from '@dev.envivo/vue-interface/src/Components/InputField';
+import ActivityIndicator from '@dev.envivo/vue-interface/src/Components/ActivityIndicator';
 
 const KEYCODE = {
     ESC: 27,
@@ -41,7 +40,7 @@ const KEYCODE = {
 const API_REQUEST_OPTIONS = [
     'bounds',
     'location',
-    'component-restrictions',
+    'componentRestrictions',
     'offset',
     'radius',
     'types'
@@ -71,6 +70,11 @@ export default {
     props: {
 
         apiKey: String,
+
+        language: {
+            type: String,
+            default: 'en'
+        },
 
         baseUri: {
             type: String,
@@ -271,7 +275,7 @@ export default {
 
     mounted() {
         if(this.apiKey) {
-            script(`${this.baseUri}?key=${this.apiKey}&libraries=${this.libraries.join(',')}`).then(() => {
+            script(`${this.baseUri}?key=${this.apiKey}&language=${this.language}&libraries=${this.libraries.join(',')}`).then(() => {
                 this.$geocoder = new window.google.maps.Geocoder();
                 this.$service = new window.google.maps.places.AutocompleteService();
                 this.loaded = true;
